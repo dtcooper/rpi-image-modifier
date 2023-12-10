@@ -21,6 +21,10 @@ inputs:
     description: 'Bash script containers to run to modify image'
     required: false
     default: ''
+  image-maxsize:
+    description: 'That maximum size of the modified image'
+    required: false
+    default: '10G'
 
 outputs:
   image-path:
@@ -34,30 +38,47 @@ runs:
     -
       name: Make sure environment is supported
       shell: bash
+      env:
+        ARG_SCRIPT_PATH: ${{ inputs.script-path }}
+        ARG_RUN: ${{ inputs.run }}
       run: |
-        if [ "$RUNNER_OS" != "Linux" ]; then
-          echo "$RUNNER_OS not supported"
+        if [ "${RUNNER_OS}" != "Linux" ]; then
+          echo "${RUNNER_OS} not supported"
           exit 1
         fi
 
-        if [ -z '${{ inputs.script-path }}' -a -z '${{ inputs.run }}' ]; then
+        if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ]; then
           echo 'You must specify either a script-path or run input'
           exit 1
         fi
     -
+      name: Setup Python
       uses: actions/setup-python@v4
       id: setup-python
       with:
         python-version: '3.12'
         update-environment: false
     -
-      name: Test
+      name: Download Raspberry Pi OS image
       shell: bash
+      id: download-image
+      env:
+        ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
       run: |
-        echo ${{ steps.setup-python.outputs.python-path }}
-        ${{ steps.setup-python.outputs.python-path }} -V
+        TEMP_DIR="$(mktemp -d)"
+        cd "$TEMP_DIR"
+        wget --content-disposition "${ARG_BASE_IMAGE_URL}"
+        exit 1
     -
-      name: Run script
-      shell: bash
-      run: |
-        env
+      name: Debug
+      uses: mxschmitt/action-tmate@v3
+      # name: Run image modifier script
+      # shell: bash
+      # env:
+      #   ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
+      #   ARG_IMAGE_PATH: ${{ inputs.image-path }}
+      #   ARG_FILES: ${{ inputs.files }}
+      #   ARG_SCRIPT_PATH: ${{ inputs.script-path }}
+      #   ARG_RUN: ${{ inputs.run }}
+      # run: |
+      #   env
