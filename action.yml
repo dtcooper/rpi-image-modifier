@@ -46,14 +46,12 @@ runs:
           echo 'You must specify either a script-path or run input'
           exit 1
         fi
-
-        # PYTHON_BIN="python${PYTHON_VERSION}"
-        # if ! which "${PYTHON_BIN}" 2> /dev/null; then
-        #   echo "Python ${PYTHON_VERSION} must be installed"
-        #   exit 1
-        # fi
-
-        echo "PYTHON_BIN=${PYTHON_BIN}" >> "$GITHUB_ENV"
+     -
+      uses: actions/setup-python@v4
+      id: cp312
+      with:
+        python-version: '3.12'
+        update-environment: false
     -
       name: Run script
       shell: bash
