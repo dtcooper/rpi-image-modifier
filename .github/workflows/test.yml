@@ -24,4 +24,7 @@ jobs:
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
           run: |
-            echo "hi mom"
+            echo 'hi mom'
+      -
+        name: Debug
+        uses: mxschmitt/action-tmate@v3

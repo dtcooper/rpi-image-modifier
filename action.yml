@@ -47,11 +47,11 @@ runs:
           exit 1
         fi
 
-        PYTHON_BIN="python${PYTHON_VERSION}"
-        if ! which "${PYTHON_BIN}" 2> /dev/null; then
-          echo "Python ${PYTHON_VERSION} must be installed"
-          exit 1
-        fi
+        # PYTHON_BIN="python${PYTHON_VERSION}"
+        # if ! which "${PYTHON_BIN}" 2> /dev/null; then
+        #   echo "Python ${PYTHON_VERSION} must be installed"
+        #   exit 1
+        # fi
 
         echo "PYTHON_BIN=${PYTHON_BIN}" >> "$GITHUB_ENV"
     -
