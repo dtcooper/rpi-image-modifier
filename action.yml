@@ -65,10 +65,16 @@ runs:
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
       run: |
-        TEMP_DIR="$(mktemp -d)"
-        cd "$TEMP_DIR"
+        WORKING_DIR="$(mktemp -d)"
+        cd "${WORKING_DIR}"
         wget --content-disposition "${ARG_BASE_IMAGE_URL}"
-        exit 1
+        echo "working-dir=${WORKING_DIR}" >> "${GITHUB_OUTPUT}"
+    - name: Test
+      shell: bash
+      with:
+        ARG_WORKING_DIR: ${{ steps.download-image.outputs.working-dir }}
+      run: |
+        echo "${ARG_WORKING_DIR}"
     -
       name: Debug
       uses: mxschmitt/action-tmate@v3
