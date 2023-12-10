@@ -64,6 +64,7 @@ runs:
       run: |
         sudo apt-get update
         sudo apt-get install -y --no-install-recommends \
+          qemu-user-static \
           systemd-container
     -
       name: Download Raspberry Pi OS image
@@ -103,7 +104,7 @@ runs:
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
-      run: ${{ steps.setup-python.outputs.python-path }} "${GITHUB_ACTION_PATH}/action.py"
+      run: sudo -E ${{ steps.setup-python.outputs.python-path }} "${GITHUB_ACTION_PATH}/action.py"
     -
       name: Debug
       uses: mxschmitt/action-tmate@v3
