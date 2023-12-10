@@ -71,7 +71,7 @@ runs:
         echo "working-dir=${WORKING_DIR}" >> "${GITHUB_OUTPUT}"
     - name: Test
       shell: bash
-      with:
+      env:
         ARG_WORKING_DIR: ${{ steps.download-image.outputs.working-dir }}
       run: |
         echo "${ARG_WORKING_DIR}"
