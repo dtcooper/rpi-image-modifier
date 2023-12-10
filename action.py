@@ -13,6 +13,9 @@ arg_run = os.environ["ARG_RUN"]
 
 
 files = list(workdir.iterdir())
+print(list(workdir.iterdir()))
+print(workdir / files[0])
+print((workdir / files[0]).is_file())
 
 if len(files) != 1 or not (image_path := workdir / files[0]).is_file():
     print("Only one image file expected. (Did your archive content more than one?)")
