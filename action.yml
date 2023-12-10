@@ -1,0 +1,61 @@
+name: RPi Image Modifier
+description: Raspberry Pi OS Image Modifier
+
+inputs:
+  base-image-url:
+    description: 'Base Raspberry Pi OS image URL'
+    required: true
+  image-path:
+    description: 'Where to locate the modifier image'
+    required: false
+    default: ''
+  files:
+    description: 'Files to copy to image'
+    required: false
+    default: ''
+  script-path:
+    description: 'Path of script to run to modify image'
+    required: false
+    default: ''
+  run:
+    description: 'Bash script containers to run to modify image'
+    required: false
+    default: ''
+
+outputs:
+  image-path:
+    description: 'Path of modified Raspberry Pi OS image'
+    #value: ${{ steps.random-number-generator.outputs.random-number }}
+    value: TODO
+
+runs:
+  using: "composite"
+  steps:
+    -
+      name: Make sure environment is supported
+      shell: bash
+      env:
+        PYTHON_VERSION: '3.12'
+      run: |
+        if [ "$RUNNER_OS" != "Linux" ]; then
+          echo "$RUNNER_OS not supported"
+          exit 1
+        fi
+
+        if [ -z "${{ inputs.script-path }}" -a -z "${{ inputs.run }}" ]; then
+          echo 'You must specify either a script-path or run input'
+          exit 1
+        fi
+
+        PYTHON_BIN="python${PYTHON_VERSION}"
+        if ! which "${PYTHON_BIN}" 2> /dev/null; then
+          echo "Python ${PYTHON_VERSION} must be installed"
+          exit 1
+        fi
+
+        echo "PYTHON_BIN=${PYTHON_BIN}" >> "$GITHUB_ENV"
+    -
+      name: Run script
+      shell: bash
+      run: |
+        env
