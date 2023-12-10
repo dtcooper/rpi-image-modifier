@@ -13,6 +13,7 @@ arg_run = os.environ["ARG_RUN"]
 
 
 files = list(workdir.iterdir())
+print(workdir)
 print(list(workdir.iterdir()))
 print(workdir / files[0])
 print((workdir / files[0]).is_file())

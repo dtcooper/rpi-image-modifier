@@ -97,7 +97,7 @@ runs:
       name: Modify Raspberry Pi OS Image
       shell: bash
       env:
-        ARG_DOWNLOADED_IMAGE_WORKDIR: ${{ steps.download-image.outputs.working-dir }}
+        ARG_DOWNLOADED_IMAGE_WORKDIR: ${{ steps.download-image.outputs.downloaded-image-workdir }}
         ARG_IMAGE_PATH: ${{ inputs.image-path }}
         ARG_FILES: ${{ inputs.files }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
