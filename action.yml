@@ -24,7 +24,7 @@ inputs:
   image-maxsize:
     description: 'That maximum size of the modified image'
     required: false
-    default: '10G'
+    default: '12G'
 
 outputs:
   image-path:
@@ -58,6 +58,13 @@ runs:
       with:
         python-version: '3.12'
         update-environment: false
+    -
+      name: Setup requirements
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          systemd-container
     -
       name: Download Raspberry Pi OS image
       shell: bash
@@ -95,6 +102,7 @@ runs:
         ARG_FILES: ${{ inputs.files }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
+        ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run: ${{ steps.setup-python.outputs.python-path }} "${GITHUB_ACTION_PATH}/action.py"
     -
       name: Debug
