@@ -65,16 +65,38 @@ runs:
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
       run: |
-        WORKING_DIR="$(mktemp -d)"
-        cd "${WORKING_DIR}"
+        TEMPDIR="$(mktemp -d)"
+        cd "${TEMPDIR}"
+
         wget --content-disposition "${ARG_BASE_IMAGE_URL}"
-        echo "working-dir=${WORKING_DIR}" >> "${GITHUB_OUTPUT}"
-    - name: Test
+
+        DOWNLOADED_IMAGE_PATH="$(ls -1)"
+        MIMETYPE="$(file -b --mime-type ${DOWNLOADED_IMAGE_PATH})"
+
+        case "${MIMETYPE}" in
+          application/x-xz) xz -d "${DOWNLOADED_IMAGE_PATH}" ;;
+          application/gzip) gzip -d "${DOWNLOADED_IMAGE_PATH}" ;;
+          application/x-bzip2) bzip2 -d "${DOWNLOADED_IMAGE_PATH}" ;;
+          application/x-lzma) lzma -d "${DOWNLOADED_IMAGE_PATH}" ;;
+          application/zip)
+            unzip "${DOWNLOADED_IMAGE_PATH}"
+            rm "${DOWNLOADED_IMAGE_PATH}"
+            ;;
+        esac
+
+        echo "downloaded-image-workdir=${TEMPDIR}" >> "${GITHUB_OUTPUT}"
+    -
+      name: Modify Raspberry Pi OS Image
       shell: bash
       env:
-        ARG_WORKING_DIR: ${{ steps.download-image.outputs.working-dir }}
+        ARG_DOWNLOADED_IMAGE_WORKDIR: ${{ steps.download-image.outputs.working-dir }}
+        ARG_IMAGE_PATH: ${{ inputs.image-path }}
+        ARG_FILES: ${{ inputs.files }}
+        ARG_SCRIPT_PATH: ${{ inputs.script-path }}
+        ARG_RUN: ${{ inputs.run }}
       run: |
-        echo "${ARG_WORKING_DIR}"
+        pwd
+        env
     -
       name: Debug
       uses: mxschmitt/action-tmate@v3
