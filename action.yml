@@ -68,7 +68,8 @@ runs:
         TEMPDIR="$(mktemp -d)"
         cd "${TEMPDIR}"
 
-        wget --content-disposition "${ARG_BASE_IMAGE_URL}"
+        echo "Downloading ${ARG_BASE_IMAGE_URL}..."
+        wget -q --content-disposition "${ARG_BASE_IMAGE_URL}"
 
         DOWNLOADED_IMAGE_PATH="$(ls -1)"
         MIMETYPE="$(file -b --mime-type ${DOWNLOADED_IMAGE_PATH})"
@@ -94,9 +95,7 @@ runs:
         ARG_FILES: ${{ inputs.files }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
-      run: |
-        pwd
-        env
+      run: ${{ steps.setup-python.outputs.python-path }} "${GITHUB_ACTION_PATH}/action.py"
     -
       name: Debug
       uses: mxschmitt/action-tmate@v3
