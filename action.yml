@@ -42,7 +42,7 @@ runs:
           exit 1
         fi
 
-        if [ -z ${{ '${{ inputs.script-path}}' }} -a -z ${{ '${{ inputs.run }}' }} ]; then
+        if [ -z '${{ inputs.script-path }}' -a -z '${{ inputs.run }}' ]; then
           echo 'You must specify either a script-path or run input'
           exit 1
         fi
