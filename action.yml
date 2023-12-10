@@ -34,8 +34,6 @@ runs:
     -
       name: Make sure environment is supported
       shell: bash
-      env:
-        PYTHON_VERSION: '3.12'
       run: |
         if [ "$RUNNER_OS" != "Linux" ]; then
           echo "$RUNNER_OS not supported"
@@ -46,12 +44,18 @@ runs:
           echo 'You must specify either a script-path or run input'
           exit 1
         fi
-     -
+    -
       uses: actions/setup-python@v4
-      id: cp312
+      id: setup-python
       with:
         python-version: '3.12'
         update-environment: false
+    -
+      name: Test
+      shell: bash
+      run: |
+        echo ${{ steps.setup-python.outputs.python-path }}
+        ${{ steps.setup-python.outputs.python-path }} -V
     -
       name: Run script
       shell: bash
