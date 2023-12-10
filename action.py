@@ -14,11 +14,9 @@ arg_run = os.environ["ARG_RUN"]
 
 files = list(workdir.iterdir())
 
-if len(files) != 1 or not files[0].is_file():
+if len(files) != 1 or not (image_path := workdir / files[0]).is_file():
     print("Only one image file expected. (Did your archive content more than one?)")
     sys.exit(1)
-
-image_path = files[0]
 
 print("Creating loopback device")
 loopback_dev = check_output(["sudo", "losetup", "-fP", "--show", str(image_path)], text=True).strip()
