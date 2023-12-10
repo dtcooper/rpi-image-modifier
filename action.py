@@ -11,19 +11,16 @@ arg_files = os.environ["ARG_FILES"]
 arg_script_path = os.environ["ARG_SCRIPT_PATH"]
 arg_run = os.environ["ARG_RUN"]
 
+os.chdir(workdir)
 
 files = list(workdir.iterdir())
-print(workdir)
-print(list(workdir.iterdir()))
-print(workdir / files[0])
-print((workdir / files[0]).is_file())
 
-if len(files) != 1 or not (image_path := workdir / files[0]).is_file():
+if len(files) != 1 or not files[0].is_file():
     print("Only one image file expected. (Did your archive content more than one?)")
     sys.exit(1)
 
-print("Creating loopback device")
-loopback_dev = check_output(["sudo", "losetup", "-fP", "--show", str(image_path)], text=True).strip()
+image_path = files[0]
+loopback_dev = check_output(["sudo", "losetup", "-fP", "--show", image_path], text=True).strip()
 
 print(f"Created device {loopback_dev}")
 print(f"Expanding second partition to {arg_image_maxsize}")
