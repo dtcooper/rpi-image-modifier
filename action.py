@@ -20,14 +20,21 @@ if len(files) != 1 or not files[0].is_file():
     sys.exit(1)
 
 image_path = files[0]
+
+print(f"Temporarily expanding image to {arg_image_maxsize}")
+check_call(["fallocate", "-l", arg_image_maxsize, image_path])
+
+loopback_dev = check_output(["sudo", "losetup", "-fP", "--show", image_path], text=True).strip()
+print(f"Created looped device {loopback_dev}")
+
+print("Expanding partition")
+check_call(["sudo", "parted", image_path, "resizepart", "2", "100%FREE"])
+check_call(["sudo", "losetup", "-d", loopback_dev])
 loopback_dev = check_output(["sudo", "losetup", "-fP", "--show", image_path], text=True).strip()
 
-print(f"Created device {loopback_dev}")
-print(f"Expanding second partition to {arg_image_maxsize}")
-check_call(["fallocate", "-l", arg_image_maxsize, image_path])
-check_call(["sudo", "parted", image_path, "resizepart", "2", "100%FREE"])
-# check_call(["sudo", "partprobe", "-s", loopback_dev])
-# check_call(["sudo", "resize2fs", f"{loopback_dev}p2"])
+print(f"Re-created looped device {loopback_dev}")
+print("Resizing partition")
+check_call(["sudo", "resize2fs", f"{loopback_dev}p2"])
 
 # print(f"Destroying loopback device {loopback_dev}")
 # check_call(['sudo', 'losetup', '-d', loopback_dev])
