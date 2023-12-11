@@ -76,6 +76,7 @@ SCRIPT_NAME="/tmp/_asdf.sh"  # XXX
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
+    echo -e "#!/bin/bash\n\n" | sudo tee "mnt${SCRIPT_NAME}"
     echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
