@@ -2,11 +2,36 @@
 
 set -e
 
-mkdir -p /tmp/rpi-image-modifier/mnt
-pushd /tmp/rpi-image-modifier
+TEMP_DIR=/tmp/rpi-image-modifier
 
-echo "Downloading ${ARG_BASE_IMAGE_URL}..."
-wget -qO rpi.img "${ARG_BASE_IMAGE_URL}"
+# Check we're Linux and have the proper arguments
+if [ "${RUNNER_OS}" != "Linux" ]; then
+    echo "${RUNNER_OS} not supported"
+    exit 1
+fi
+
+if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "${ARG_RUN}" ]; then
+    echo 'You must specify either a script-path or run input, but not both.'
+    exit 1
+fi
+
+sudo apt-get update
+sudo apt-get install -y --no-install-recommends \
+    qemu-user-static \
+    systemd-container
+sudo wget -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+sudo chmod +x /usr/local/bin/pishrink.sh
+
+mkdir -p "${TEMP_DIR}/mnt"
+pushd "${TEMP_DIR}"
+
+
+if [ -e rpi.img ]; then
+    echo 'TESTING: rpi.img already exists'
+else
+    echo "Downloading ${ARG_BASE_IMAGE_URL}..."
+    wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
+fi
 
 case "$(file -b --mime-type rpi.img)" in
     application/x-xz) mv rpi.img rpi.img.xz && xz -d rpi.img.xz ;;
@@ -14,11 +39,6 @@ case "$(file -b --mime-type rpi.img)" in
     application/x-bzip2) mv rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
     application/x-lzma) mv rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
 esac
-
-if [ "$(ls -1 | wc -l)" -eq 1 ]; then
-    echo 'Only one image file expected. (Did your base image URL contain more than one?)'
-    exit 1
-fi
 
 echo "Temporarily expanding image to ${ARG_IMAGE_MAXSIZE}"
 fallocate -l "${ARG_IMAGE_MAXSIZE}" rpi.img
@@ -35,5 +55,18 @@ echo 'Resizing second partition'
 sudo resize2fs "${LOOPBACK_DEV}p2"
 
 echo 'Mounting image'
-sudo mount "${LOOPBACK_DEV}p2" /tmp/rpi-image-modifier/mnt
-sudo mount "${LOOPBACK_DEV}p1" /tmp/rpi-image-modifier/mnt/boot
+sudo mount "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
+sudo mount "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
+
+echo 'Temporarily copying qemu binaries to mounted image'
+for arch in arm aarch64; do
+    qemu_bin="$(grep -F interpreter "/proc/sys/fs/binfmt_misc/qemu-${arch}" | awk '{ print $2 }')"
+    QEMU_BIN_MNT_DIR="$(dirname "${qemu_bin}")"
+    sudo mkdir -p "${QEMU_BIN_MNT_DIR}"
+    sudo cp -v "${qemu_bin}" "${TEMP_DIR}/mnt${QEMU_BIN_MNT_DIR}"
+done
+
+# Cleanup
+sudo mount -R "${TEMP_DIR}/mnt"
+sudo losetup -d "${LOOPBACK_DEV}"
+sudo pishrink.sh "${TEMP_DIR}/rpi.img"
