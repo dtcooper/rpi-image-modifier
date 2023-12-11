@@ -13,7 +13,7 @@ concurrency:
 jobs:
   test-bookworm-arm64:
     runs-on: ubuntu-22.04
-    name: Test Bookworm arm64
+    name: Test Bookworm (arm64)
     steps:
       -
         name: Test action
@@ -29,7 +29,7 @@ jobs:
             echo 'bye mom!'
   test-bookworm-armhf:
     runs-on: ubuntu-22.04
-    name: Test Bookworm arm64
+    name: Test Bookworm (armhf)
     steps:
       -
         name: Checkout
