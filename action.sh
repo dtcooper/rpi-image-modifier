@@ -2,19 +2,18 @@
 
 set -e
 
-TEMP_DIR=/tmp/rpi-image-modifier
-ORIG_DIR="$(pwd -P)"
-
 # Check we're Linux and have the proper arguments
 if [ "${RUNNER_OS}" != "Linux" ]; then
-    echo "${RUNNER_OS} not supported"
+    echo "ERROR: ${RUNNER_OS} not supported"
+    exit 1
+fi
+if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "${ARG_RUN}" ]; then
+    echo 'ERROR: You must specify either a script-path or run input, but not both.'
     exit 1
 fi
 
-if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "${ARG_RUN}" ]; then
-    echo 'You must specify either a script-path or run input, but not both.'
-    exit 1
-fi
+TEMP_DIR=/tmp/rpi-image-modifier
+ORIG_DIR="$(pwd -P)"
 
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
@@ -73,9 +72,21 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
-# Cleanup
+SCRIPT_NAME="/tmp/_$(tr -dc A-Za-z0-9 </dev/urandom | head -c 10).sh"
 
-exit 0
+if [ "$ARG_RUN" ]; then
+    echo "Generating script to run in image container"
+    echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
+else
+    echo "Copying script to run in image container"
+    sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
+fi
+sudo chmod +x "mnt${SCRIPT_NAME}"
+
+echo 'Running script in image container'
+sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${SCRIPT_NAME}"
+
+echo '...Done!'
 
 echo 'Unmounting and removing loopback device'
 sudo umount -R "${TEMP_DIR}/mnt"
