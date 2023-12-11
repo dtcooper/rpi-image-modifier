@@ -72,18 +72,17 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
-SCRIPT_NAME="/tmp/_asdf.sh"  # XXX
+SCRIPT_NAME="${TEMP_DIR}/_$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 10).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
-    echo -e '#!/bin/bash\n' && echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
+    echo -e "#/bin/bash\n" > "${SCRIPT_NAME}"
+    echo "$ARG_RUN" >> "${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
-    sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
+    cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "${SCRIPT_NAME}"
 fi
-sudo chmod +x "mnt${SCRIPT_NAME}"
-
-echo "XXX mnt${SCRIPT_NAME}"
+chmod +x "${SCRIPT_NAME}"
 
 echo 'Running script in image container'
 sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${SCRIPT_NAME}"
