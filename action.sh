@@ -91,9 +91,12 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo rmdir -v mnt/mounted-github-repo
 fi
 
-# echo 'Unmounting and removing loopback device'
-# sudo umount -R mnt
-# sudo losetup -d "${LOOPBACK_DEV}"
+echo 'Unmounting and removing loopback device'
+sudo umount -R mnt
+sudo losetup -d "${LOOPBACK_DEV}"
 
-# echo 'Shrinking image'
-# sudo pishrink.sh rpi.img
+echo 'Shrinking image'
+sudo pishrink.sh rpi.img
+
+echo "Moving image to ${ARG_IMAGE_PATH}"
+mv -v rpi.img "${ORIG_DIR}/${ARG_IMAGE_PATH}"

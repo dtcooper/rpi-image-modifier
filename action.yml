@@ -14,7 +14,7 @@ inputs:
     required: false
     default: ''
   image-path:
-    description: 'Where to locate the modifier image (default: rpi-os-modified.img)'
+    description: 'What to name the modified image (default: rpi-os-modified.img)'
     required: false
     default: 'rpi-os-modified.img'
   mount-repository:
@@ -52,6 +52,3 @@ runs:
         ARG_SHELL: ${{ inputs.shell }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run:  "${GITHUB_ACTION_PATH}/action.sh"
-    -
-      name: Debug
-      uses: mxschmitt/action-tmate@v3
