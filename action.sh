@@ -72,7 +72,7 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
-SCRIPT_NAME="/tmp/_$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 10).sh"
+SCRIPT_NAME="/tmp/_asdf.sh"  # XXX
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
