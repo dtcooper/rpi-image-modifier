@@ -12,9 +12,6 @@ if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "
     exit 1
 fi
 
-TEMP_DIR=/tmp/rpi-image-modifier
-ORIG_DIR="$(pwd -P)"
-
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
     pwgen \
@@ -23,6 +20,9 @@ sudo apt-get install -y --no-install-recommends \
 sudo wget -O /usr/local/bin/pishrink.sh \
     https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
 sudo chmod +x /usr/local/bin/pishrink.sh
+
+TEMP_DIR="/tmp/rpi-image-modifier-$(pwgen -s1 8)"
+ORIG_DIR="$(pwd -P)"
 
 mkdir -p "${TEMP_DIR}/mnt"
 cd "${TEMP_DIR}"
@@ -83,7 +83,7 @@ else
     echo "Copying script to run in image container"
     cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
 fi
-chmod +x "${SCRIPT_NAME}"
+chmod +x "mnt${SCRIPT_NAME}"
 
 echo "Running script in image container using ${ARG_CONTAINER_SHELL}"
 sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_CONTAINER_SHELL}" "${SCRIPT_NAME}"
