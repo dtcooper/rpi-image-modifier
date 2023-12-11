@@ -11,16 +11,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  test-bookworm-arm64:
     runs-on: ubuntu-22.04
-    name: Test
+    name: Test Bookworm arm64
     steps:
       -
-        name: Checkout
-        uses: actions/checkout@v4
-      -
         name: Test action
-        uses: ./
+        uses: dtcooper/rpi-image-modifier@main
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
           run: |
@@ -30,3 +27,17 @@ jobs:
             arch
             uname -a
             echo 'bye mom!'
+  test-bookworm-armhf:
+    runs-on: ubuntu-22.04
+    name: Test Bookworm arm64
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Test action
+        uses: dtcooper/rpi-image-modifier@main
+        with:
+          base-image-url: https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
+          script-path: test/script.sh
+          image-path: hi-mom.img

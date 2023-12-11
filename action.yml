@@ -51,4 +51,4 @@ runs:
         ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
         ARG_SHELL: ${{ inputs.shell }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
-      run:  "${GITHUB_ACTION_PATH}/action.sh"
+      run: "${GITHUB_ACTION_PATH}/action.sh"
