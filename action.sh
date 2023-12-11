@@ -13,6 +13,8 @@ if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "
 fi
 
 sudo apt-get update
+
+# qemu-user-static automatically installs aarch64/arm interpeters
 sudo apt-get install -y --no-install-recommends \
     pwgen \
     qemu-user-static \
@@ -60,14 +62,6 @@ echo 'Mounting image'
 sudo mount "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
 sudo mount "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
 
-echo 'Temporarily copying qemu binaries to mounted image'
-for arch in arm aarch64; do
-    qemu_bin="$(grep -F interpreter "/proc/sys/fs/binfmt_misc/qemu-${arch}" | awk '{ print $2 }')"
-    QEMU_BIN_DIR="${TEMP_DIR}/mnt$(dirname "${qemu_bin}")"
-    sudo mkdir -p "${QEMU_BIN_DIR}"
-    sudo cp -v "${qemu_bin}" "${QEMU_BIN_DIR}"
-done
-
 if [ "$ARG_MOUNT_REPOSITORY" ]; then
     echo "Mounting ${ORIG_DIR} to /github-repo in image"
     sudo mkdir mnt/github-repo
@@ -90,18 +84,16 @@ sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_
 
 echo '...Done!'
 
-echo 'Cleaning up qemu binaries and script'
-# for arch in arm aarch64; do
-#     rm "${QEMU_BIN_DIR}"
-#     qemu_bin="$(grep -F interpreter "/proc/sys/fs/binfmt_misc/qemu-${arch}" | awk '{ print $2 }')"
-#     QEMU_BIN_DIR="${TEMP_DIR}/mnt$(dirname "${qemu_bin}")"
-#     sudo mkdir -p "${QEMU_BIN_DIR}"
-#     sudo cp -v "${qemu_bin}" "${QEMU_BIN_DIR}"
-# done
+echo 'Cleaning up image'
+sudo rm "mnt${SCRIPT_NAME}"
+if [ "$ARG_MOUNT_REPOSITORY" ]; then
+    sudo umount mnt/github-repo
+    rmdir mnt/github-repo
+fi
 
 # echo 'Unmounting and removing loopback device'
-# sudo umount -R "${TEMP_DIR}/mnt"
+# sudo umount -R mnt
 # sudo losetup -d "${LOOPBACK_DEV}"
 
 # echo 'Shrinking image'
-# sudo pishrink.sh "${TEMP_DIR}/rpi.img"
+# sudo pishrink.sh rpi.img
