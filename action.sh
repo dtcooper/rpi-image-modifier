@@ -34,10 +34,10 @@ else
 fi
 
 case "$(file -b --mime-type rpi.img)" in
-    application/x-xz) mv rpi.img rpi.img.xz && xz -d rpi.img.xz ;;
-    application/gzip) mv rpi.img rpi.img.gz && gzip -d rpi.img.gz ;;
-    application/x-bzip2) mv rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
-    application/x-lzma) mv rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
+    application/x-xz) mv -v rpi.img rpi.img.xz && xz -d rpi.img.xz ;;
+    application/gzip) mv -v rpi.img rpi.img.gz && gzip -d rpi.img.gz ;;
+    application/x-bzip2) mv -v rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
+    application/x-lzma) mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
 esac
 
 echo "Temporarily expanding image to ${ARG_IMAGE_MAXSIZE}"
@@ -67,6 +67,6 @@ for arch in arm aarch64; do
 done
 
 # Cleanup
-sudo mount -R "${TEMP_DIR}/mnt"
+sudo umount -R "${TEMP_DIR}/mnt"
 sudo losetup -d "${LOOPBACK_DEV}"
 sudo pishrink.sh "${TEMP_DIR}/rpi.img"
