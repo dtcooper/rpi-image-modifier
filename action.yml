@@ -52,13 +52,6 @@ runs:
           exit 1
         fi
     -
-      name: Setup Python
-      uses: actions/setup-python@v4
-      id: setup-python
-      with:
-        python-version: '3.12'
-        update-environment: false
-    -
       name: Setup requirements
       shell: bash
       run: |
@@ -66,55 +59,20 @@ runs:
         sudo apt-get install -y --no-install-recommends \
           qemu-user-static \
           systemd-container
+        sudo wget -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+        sudo chmod +x /usr/local/bin/pishrink.sh
     -
-      name: Download Raspberry Pi OS image
+      name: Modify Raspberry Pi OS image
       shell: bash
       id: download-image
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
-      run: |
-        TEMPDIR="$(mktemp -d)"
-        cd "${TEMPDIR}"
-
-        echo "Downloading ${ARG_BASE_IMAGE_URL}..."
-        wget -q --content-disposition "${ARG_BASE_IMAGE_URL}"
-
-        DOWNLOADED_IMAGE_PATH="$(ls -1)"
-        MIMETYPE="$(file -b --mime-type ${DOWNLOADED_IMAGE_PATH})"
-
-        case "${MIMETYPE}" in
-          application/x-xz) xz -d "${DOWNLOADED_IMAGE_PATH}" ;;
-          application/gzip) gzip -d "${DOWNLOADED_IMAGE_PATH}" ;;
-          application/x-bzip2) bzip2 -d "${DOWNLOADED_IMAGE_PATH}" ;;
-          application/x-lzma) lzma -d "${DOWNLOADED_IMAGE_PATH}" ;;
-          application/zip)
-            unzip "${DOWNLOADED_IMAGE_PATH}"
-            rm "${DOWNLOADED_IMAGE_PATH}"
-            ;;
-        esac
-
-        echo "downloaded-image-workdir=${TEMPDIR}" >> "${GITHUB_OUTPUT}"
-    -
-      name: Modify Raspberry Pi OS Image
-      shell: bash
-      env:
-        ARG_DOWNLOADED_IMAGE_WORKDIR: ${{ steps.download-image.outputs.downloaded-image-workdir }}
         ARG_IMAGE_PATH: ${{ inputs.image-path }}
         ARG_FILES: ${{ inputs.files }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
-      run: sudo -E ${{ steps.setup-python.outputs.python-path }} "${GITHUB_ACTION_PATH}/action.py"
+      run:  "${GITHUB_ACTION_PATH}/action.sh"
     -
       name: Debug
       uses: mxschmitt/action-tmate@v3
-      # name: Run image modifier script
-      # shell: bash
-      # env:
-      #   ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
-      #   ARG_IMAGE_PATH: ${{ inputs.image-path }}
-      #   ARG_FILES: ${{ inputs.files }}
-      #   ARG_SCRIPT_PATH: ${{ inputs.script-path }}
-      #   ARG_RUN: ${{ inputs.run }}
-      # run: |
-      #   env
