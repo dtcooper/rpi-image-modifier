@@ -21,7 +21,7 @@ inputs:
     description: 'Temporary mount repository at /github-repo for copying files'
     required: false
     default: 'true'
-  container-shell:
+  shell:
     description: 'Shell in container to execute script (default: /bin/bash)'
     required: false
     default: '/bin/bash'
@@ -49,7 +49,7 @@ runs:
         ARG_RUN: ${{ inputs.run }}
         ARG_IMAGE_PATH: ${{ inputs.image-path }}
         ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
-        ARG_CONTAINER_SHELL: ${{ inputs.container-shell }}
+        ARG_SHELL: ${{ inputs.shell }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run:  "${GITHUB_ACTION_PATH}/action.sh"
     -

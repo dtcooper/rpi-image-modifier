@@ -78,19 +78,26 @@ SCRIPT_NAME="/_$(pwgen -s1 12).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
-    echo -e "#/bin/bash\n" && echo  echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
+    echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}" > /dev/null
 else
     echo "Copying script to run in image container"
     sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
 fi
 sudo chmod +x "mnt${SCRIPT_NAME}"
 
-echo "Running script in image container using ${ARG_CONTAINER_SHELL}"
-sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_CONTAINER_SHELL}" "${SCRIPT_NAME}"
+echo "Running script in image container using ${ARG_SHELL}"
+sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
 
 echo 'Cleaning up qemu binaries and script'
+# for arch in arm aarch64; do
+#     rm "${QEMU_BIN_DIR}"
+#     qemu_bin="$(grep -F interpreter "/proc/sys/fs/binfmt_misc/qemu-${arch}" | awk '{ print $2 }')"
+#     QEMU_BIN_DIR="${TEMP_DIR}/mnt$(dirname "${qemu_bin}")"
+#     sudo mkdir -p "${QEMU_BIN_DIR}"
+#     sudo cp -v "${qemu_bin}" "${QEMU_BIN_DIR}"
+# done
 
 # echo 'Unmounting and removing loopback device'
 # sudo umount -R "${TEMP_DIR}/mnt"
