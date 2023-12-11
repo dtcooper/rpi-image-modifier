@@ -28,7 +28,7 @@ echo "Created loopback device ${LOOPBACK_DEV}"
 echo 'Expanding partition'
 sudo parted rpi.img resizepart 2 '100%FREE'
 sudo losetup -d "${LOOPBACK_DEV}"
-LOOPBACK_DEV="$(losetup -fP --show rpi.img)"
+LOOPBACK_DEV="$(sudo losetup -fP --show rpi.img)"
 echo "Re-created looped device ${LOOPBACK_DEV}"
 
 echo 'Resizing second partition'
