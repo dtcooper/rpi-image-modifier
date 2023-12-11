@@ -26,7 +26,7 @@ sudo chmod +x /usr/local/bin/pishrink.sh
 TEMP_DIR="/tmp/rpi-image-modifier-$(pwgen -s1 8)"
 ORIG_DIR="$(pwd -P)"
 
-mkdir -p "${TEMP_DIR}/mnt"
+mkdir -vp "${TEMP_DIR}/mnt"
 cd "${TEMP_DIR}"
 
 
@@ -63,16 +63,16 @@ sudo mount "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
 sudo mount "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
 
 if [ "$ARG_MOUNT_REPOSITORY" ]; then
-    echo "Mounting ${ORIG_DIR} to /github-repo in image"
-    sudo mkdir mnt/github-repo
-    sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
+    echo "Mounting ${ORIG_DIR} to /mounted-github-repo in image"
+    sudo mkdir -v mnt/mounted-github-repo
+    sudo mount -o bind "${ORIG_DIR}" mnt/mounted-github-repo
 fi
 
 SCRIPT_NAME="/_$(pwgen -s1 12).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
-    echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}" > /dev/null
+    echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
     sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
@@ -85,10 +85,10 @@ sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_
 echo '...Done!'
 
 echo 'Cleaning up image'
-sudo rm "mnt${SCRIPT_NAME}"
+sudo rm -v "mnt${SCRIPT_NAME}"
 if [ "$ARG_MOUNT_REPOSITORY" ]; then
-    sudo umount mnt/github-repo
-    rmdir mnt/github-repo
+    sudo umount mnt/mounted-github-repo
+    sudo rmdir -v mnt/mounted-github-repo
 fi
 
 # echo 'Unmounting and removing loopback device'

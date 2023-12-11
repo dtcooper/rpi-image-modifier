@@ -18,7 +18,7 @@ inputs:
     required: false
     default: 'rpi-os-modified.img'
   mount-repository:
-    description: 'Temporary mount repository at /github-repo for copying files'
+    description: 'Temporary mount repository at /mounted-github-repo/ for copying files'
     required: false
     default: 'true'
   shell:
