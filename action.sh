@@ -72,6 +72,8 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
+exit 0
+
 SCRIPT_NAME="${TEMP_DIR}/_$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 10).sh"
 
 if [ "$ARG_RUN" ]; then
