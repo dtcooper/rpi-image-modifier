@@ -83,6 +83,8 @@ else
 fi
 sudo chmod +x "mnt${SCRIPT_NAME}"
 
+echo "XXX mnt${SCRIPT_NAME}"
+
 echo 'Running script in image container'
 sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${SCRIPT_NAME}"
 
