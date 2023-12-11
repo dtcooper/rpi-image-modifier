@@ -72,9 +72,7 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
-exit 0
-
-SCRIPT_NAME="/tmp/_$(tr -dc A-Za-z0-9 </dev/urandom | head -c 10).sh"
+SCRIPT_NAME="/tmp/_$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 10).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
@@ -90,9 +88,9 @@ sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${SCRI
 
 echo '...Done!'
 
-echo 'Unmounting and removing loopback device'
-sudo umount -R "${TEMP_DIR}/mnt"
-sudo losetup -d "${LOOPBACK_DEV}"
+# echo 'Unmounting and removing loopback device'
+# sudo umount -R "${TEMP_DIR}/mnt"
+# sudo losetup -d "${LOOPBACK_DEV}"
 
-echo 'Shrinking image'
-sudo pishrink.sh "${TEMP_DIR}/rpi.img"
+# echo 'Shrinking image'
+# sudo pishrink.sh "${TEMP_DIR}/rpi.img"
