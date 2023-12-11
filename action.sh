@@ -74,7 +74,7 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
-SCRIPT_NAME="/tmp/_$(pwgen -s1 12).sh"
+SCRIPT_NAME="/_$(pwgen -s1 12).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
