@@ -66,7 +66,16 @@ for arch in arm aarch64; do
     sudo cp -v "${qemu_bin}" "${TEMP_DIR}/mnt${QEMU_BIN_MNT_DIR}"
 done
 
+# Copy additional files
+if [ "${ARG_FILES}" -o "${ARG_RUN}" ]; then
+    # Parsing this stuff out got too complex for bash
+    sudo -E TEMP_DIR="${TEMP_DIR}" "${GITHUB_ACTION_PATH}/file-copy-helper.py"
+fi
+
 # Cleanup
+echo 'Unmounting and removing loopback device'
 sudo umount -R "${TEMP_DIR}/mnt"
 sudo losetup -d "${LOOPBACK_DEV}"
+
+echo 'Shrinking image'
 sudo pishrink.sh "${TEMP_DIR}/rpi.img"
