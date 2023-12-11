@@ -5,10 +5,6 @@ inputs:
   base-image-url:
     description: 'Base Raspberry Pi OS image URL'
     required: true
-  image-path:
-    description: 'Where to locate the modifier image'
-    required: false
-    default: ''
   script-path:
     description: 'Path of script to run to modify image'
     required: false
@@ -17,12 +13,20 @@ inputs:
     description: 'Bash script containers to run to modify image'
     required: false
     default: ''
+  image-path:
+    description: 'Where to locate the modifier image (default: rpi-os-modified.img)'
+    required: false
+    default: 'rpi-os-modified.img'
   mount-repository:
     description: 'Temporary mount repository at /github-repo for copying files'
     required: false
     default: 'true'
+  container-shell:
+    description: 'Shell in container to execute script (default: /bin/bash)'
+    required: false
+    default: '/bin/bash'
   image-maxsize:
-    description: 'That maximum size of the modified image'
+    description: 'That maximum size of the modified image (needs to fit on disk)'
     required: false
     default: '12G'
 
@@ -41,11 +45,11 @@ runs:
       id: download-image
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
-        ARG_IMAGE_PATH: ${{ inputs.image-path }}
-        ARG_FILES: ${{ inputs.files }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
+        ARG_IMAGE_PATH: ${{ inputs.image-path }}
         ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
+        ARG_CONTAINER_SHELL: ${{ inputs.container-shell }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run:  "${GITHUB_ACTION_PATH}/action.sh"
     -

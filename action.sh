@@ -17,9 +17,11 @@ ORIG_DIR="$(pwd -P)"
 
 sudo apt-get update
 sudo apt-get install -y --no-install-recommends \
+    pwgen \
     qemu-user-static \
     systemd-container
-sudo wget -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+sudo wget -O /usr/local/bin/pishrink.sh \
+    https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
 sudo chmod +x /usr/local/bin/pishrink.sh
 
 mkdir -p "${TEMP_DIR}/mnt"
@@ -72,22 +74,19 @@ if [ "$ARG_MOUNT_REPOSITORY" ]; then
     sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
-exit 0
-
-SCRIPT_NAME="${TEMP_DIR}/_$(tr -dc A-Za-z0-9 < /dev/urandom | head -c 10).sh"
+SCRIPT_NAME="/tmp/_$(pwgen -s1 12).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
-    echo -e "#/bin/bash\n" > "${SCRIPT_NAME}"
-    echo "$ARG_RUN" >> "${SCRIPT_NAME}"
+    echo -e "#/bin/bash\n" && echo  echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
-    cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "${SCRIPT_NAME}"
+    cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
 fi
 chmod +x "${SCRIPT_NAME}"
 
-echo 'Running script in image container'
-sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${SCRIPT_NAME}"
+echo "Running script in image container using ${ARG_CONTAINER_SHELL}"
+sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_CONTAINER_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
 
