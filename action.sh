@@ -34,6 +34,6 @@ echo "Re-created looped device ${LOOPBACK_DEV}"
 echo 'Resizing second partition'
 sudo resize2fs "${LOOPBACK_DEV}p2"
 
-print 'Mounting image'
+echo 'Mounting image'
 sudo mount "${LOOPBACK_DEV}p2" /tmp/rpi-image-modifier/mnt
 sudo mount "${LOOPBACK_DEV}p1" /tmp/rpi-image-modifier/mnt/boot
