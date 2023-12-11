@@ -9,10 +9,6 @@ inputs:
     description: 'Where to locate the modifier image'
     required: false
     default: ''
-  files:
-    description: 'Files to copy to image'
-    required: false
-    default: ''
   script-path:
     description: 'Path of script to run to modify image'
     required: false
@@ -21,6 +17,10 @@ inputs:
     description: 'Bash script containers to run to modify image'
     required: false
     default: ''
+  mount-repository:
+    description: 'Temporary mount repository at /github-repo for copying files'
+    required: false
+    default: 'true'
   image-maxsize:
     description: 'That maximum size of the modified image'
     required: false
@@ -45,6 +45,7 @@ runs:
         ARG_FILES: ${{ inputs.files }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
+        ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run:  "${GITHUB_ACTION_PATH}/action.sh"
     -

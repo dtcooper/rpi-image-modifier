@@ -3,6 +3,7 @@
 set -e
 
 TEMP_DIR=/tmp/rpi-image-modifier
+ORIG_DIR="$(pwd -P)"
 
 # Check we're Linux and have the proper arguments
 if [ "${RUNNER_OS}" != "Linux" ]; then
@@ -23,7 +24,7 @@ sudo wget -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsi
 sudo chmod +x /usr/local/bin/pishrink.sh
 
 mkdir -p "${TEMP_DIR}/mnt"
-pushd "${TEMP_DIR}"
+cd "${TEMP_DIR}"
 
 
 if [ -e rpi.img ]; then
@@ -61,18 +62,21 @@ sudo mount "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
 echo 'Temporarily copying qemu binaries to mounted image'
 for arch in arm aarch64; do
     qemu_bin="$(grep -F interpreter "/proc/sys/fs/binfmt_misc/qemu-${arch}" | awk '{ print $2 }')"
-    QEMU_BIN_MNT_DIR="$(dirname "${qemu_bin}")"
-    sudo mkdir -p "${QEMU_BIN_MNT_DIR}"
-    sudo cp -v "${qemu_bin}" "${TEMP_DIR}/mnt${QEMU_BIN_MNT_DIR}"
+    QEMU_BIN_DIR="${TEMP_DIR}/mnt$(dirname "${qemu_bin}")"
+    sudo mkdir -p "${QEMU_BIN_DIR}"
+    sudo cp -v "${qemu_bin}" "${QEMU_BIN_DIR}"
 done
 
-# Copy additional files
-if [ "${ARG_FILES}" -o "${ARG_RUN}" ]; then
-    # Parsing this stuff out got too complex for bash
-    sudo -E TEMP_DIR="${TEMP_DIR}" "${GITHUB_ACTION_PATH}/file-copy-helper.py"
+if [ "$ARG_MOUNT_REPOSITORY" ]; then
+    echo "Mounting ${ORIG_DIR} to /github-repo in image"
+    sudo mkdir mnt/github-repo
+    sudo mount -o bind "${ORIG_DIR}" "mnt/github-repo"
 fi
 
 # Cleanup
+
+exit 0
+
 echo 'Unmounting and removing loopback device'
 sudo umount -R "${TEMP_DIR}/mnt"
 sudo losetup -d "${LOOPBACK_DEV}"
