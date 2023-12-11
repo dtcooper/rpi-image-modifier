@@ -81,14 +81,16 @@ if [ "$ARG_RUN" ]; then
     echo -e "#/bin/bash\n" && echo  echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
-    cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
+    sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
 fi
-chmod +x "mnt${SCRIPT_NAME}"
+sudo chmod +x "mnt${SCRIPT_NAME}"
 
 echo "Running script in image container using ${ARG_CONTAINER_SHELL}"
 sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_CONTAINER_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
+
+echo 'Cleaning up qemu binaries and script'
 
 # echo 'Unmounting and removing loopback device'
 # sudo umount -R "${TEMP_DIR}/mnt"
