@@ -55,6 +55,7 @@ for arch in ("aarch64", "arm"):
                 print(f"Temporarily copying {qemu_bin_src} to image")
                 shutil.copy(qemu_bin_src, qemu_bin_dest)
                 cleanup_files.append(qemu_bin_dest)
+                break
         else:
             print(f"qemu interpreter for {arch} not found!")
             sys.exit(1)
