@@ -7,6 +7,19 @@ if [ "${RUNNER_OS}" != "Linux" ]; then
     echo "ERROR: ${RUNNER_OS} not supported"
     exit 1
 fi
+
+cat <<EOF
+Running dtcooper/rpi-image-modifier with...
+  *   base-image-url: ${ARG_BASE_IMAGE_URL}
+  *      script-path: ${ARG_SCRIPT_PATH}
+  *              run: ${ARG_RUN}
+  *       image-path: ${ARG_IMAGE_PATH}
+  * mount-repository: ${ARG_MOUNT_REPOSITORY}
+  * compress-with-xz: ${ARG_COMPRESS_WITH_XZ}
+  *            shell: ${ARG_SHELL}
+  *    image-maxsize: ${ARG_IMAGE_MAXSIZE}
+EOF
+
 if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "${ARG_RUN}" ]; then
     echo 'ERROR: You must specify either a script-path or run input, but not both.'
     exit 1
@@ -86,7 +99,7 @@ echo '...Done!'
 
 echo 'Cleaning up image'
 sudo rm -v "mnt${SCRIPT_NAME}"
-if [ "$ARG_MOUNT_REPOSITORY" ]; then
+if [ "${ARG_MOUNT_REPOSITORY}" ]; then
     sudo umount mnt/mounted-github-repo
     sudo rmdir -v mnt/mounted-github-repo
 fi
@@ -100,3 +113,10 @@ sudo pishrink.sh rpi.img
 
 echo "Moving image to ${ARG_IMAGE_PATH}"
 mv -v rpi.img "${ORIG_DIR}/${ARG_IMAGE_PATH}"
+
+if [ "${ARG_COMPRESS_WITH_XZ}" ]; then
+    xz -T0 "${ORIG_DIR}/${ARG_IMAGE_PATH}"
+    ARG_IMAGE_PATH="${ARG_IMAGE_PATH}.xz"
+fi
+
+echo "${ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"

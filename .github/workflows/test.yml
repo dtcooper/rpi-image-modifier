@@ -18,6 +18,7 @@ jobs:
       -
         name: Test action
         uses: dtcooper/rpi-image-modifier@main
+        id: image-modifier-test
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
           run: |
@@ -27,6 +28,12 @@ jobs:
             arch
             uname -a
             echo 'bye mom!'
+      -
+        name: Confirm output
+        shell: bash
+        run: |
+          echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
+
   test-bookworm-armhf:
     runs-on: ubuntu-22.04
     name: Test Bookworm (armhf)
@@ -37,7 +44,14 @@ jobs:
       -
         name: Test action
         uses: dtcooper/rpi-image-modifier@main
+        id: image-modifier-test
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
           script-path: test/script.sh
           image-path: hi-mom.img
+          compress-with-xz: true
+      -
+        name: Confirm output
+        shell: bash
+        run: |
+          echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'

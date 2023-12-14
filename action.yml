@@ -21,6 +21,10 @@ inputs:
     description: 'Temporary mount repository at /mounted-github-repo/ for copying files'
     required: false
     default: 'true'
+  compress-with-xz:
+    description: 'Compress final image with xz (image-path will have an .xz extension added)'
+    required: false
+    default: 'false'
   shell:
     description: 'Shell in container to execute script (default: /bin/bash)'
     required: false
@@ -33,8 +37,7 @@ inputs:
 outputs:
   image-path:
     description: 'Path of modified Raspberry Pi OS image'
-    #value: ${{ steps.random-number-generator.outputs.random-number }}
-    value: TODO
+    value: ${{ steps.modify-image.outputs.image-path }}
 
 runs:
   using: "composite"
@@ -42,13 +45,14 @@ runs:
     -
       name: Modify Raspberry Pi OS image
       shell: bash
-      id: download-image
+      id: modify-image
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
         ARG_SCRIPT_PATH: ${{ inputs.script-path }}
         ARG_RUN: ${{ inputs.run }}
         ARG_IMAGE_PATH: ${{ inputs.image-path }}
         ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
+        ARG_COMPRESS_WITH_XZ: ${{ inputs.compress-with-xz == 'true' && '1' || '' }}
         ARG_SHELL: ${{ inputs.shell }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run: "${GITHUB_ACTION_PATH}/action.sh"
