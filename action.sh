@@ -39,7 +39,7 @@ else
 fi
 
 case "$(file -b --mime-type rpi.img)" in
-    application/x-xz) echo 'Decompressing with xz' && mv -v rpi.img rpi.img.xz && xz -d rpi.img.xz ;;
+    application/x-xz) echo 'Decompressing with xz' && mv -v rpi.img rpi.img.xz && xz -T0 -d rpi.img.xz ;;
     application/gzip) echo 'Decompressing with gzip' && mv -v rpi.img rpi.img.gz && gzip -d rpi.img.gz ;;
     application/x-bzip2) echo 'Decompressing with bzip2' && mv -v rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
     application/x-lzma) echo 'Decompressing with lzma' && mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
