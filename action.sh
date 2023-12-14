@@ -119,4 +119,4 @@ if [ "${ARG_COMPRESS_WITH_XZ}" ]; then
     ARG_IMAGE_PATH="${ARG_IMAGE_PATH}.xz"
 fi
 
-echo "${ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"
+echo "image-path=${ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"
