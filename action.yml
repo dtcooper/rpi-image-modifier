@@ -3,18 +3,18 @@ description: Raspberry Pi OS Image Modifier
 
 inputs:
   base-image-url:
-    description: 'Base Raspberry Pi OS image URL'
+    description: 'Base Raspberry Pi OS image URL (required)'
     required: true
   script-path:
-    description: 'Path of script to run to modify image'
+    description: 'Path of script to run to modify image (one of script-path or run is required)'
     required: false
     default: ''
   run:
-    description: 'Bash script containers to run to modify image'
+    description: 'Bash script containers to run to modify image (one of script-path or run is required)'
     required: false
     default: ''
   image-path:
-    description: 'What to name the modified image (default: rpi-os-modified.img)'
+    description: 'What to name the modified image'
     required: false
     default: 'rpi-os-modified.img'
   mount-repository:
@@ -26,7 +26,7 @@ inputs:
     required: false
     default: 'false'
   shell:
-    description: 'Shell in container to execute script (default: /bin/bash)'
+    description: 'Shell in container to execute script'
     required: false
     default: '/bin/bash'
   image-maxsize:
@@ -36,7 +36,7 @@ inputs:
 
 outputs:
   image-path:
-    description: 'Path of modified Raspberry Pi OS image'
+    description: 'Filename of image, will be same as image-path unless compress-with-xz is set in which case it will have a .xz extension'
     value: ${{ steps.modify-image.outputs.image-path }}
 
 runs:
