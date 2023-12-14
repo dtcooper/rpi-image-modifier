@@ -8,18 +8,6 @@ if [ "${RUNNER_OS}" != "Linux" ]; then
     exit 1
 fi
 
-cat <<EOF
-Running dtcooper/rpi-image-modifier with...
-  *   base-image-url: ${ARG_BASE_IMAGE_URL}
-  *      script-path: ${ARG_SCRIPT_PATH}
-  *              run: ${ARG_RUN}
-  *       image-path: ${ARG_IMAGE_PATH}
-  * mount-repository: ${ARG_MOUNT_REPOSITORY}
-  * compress-with-xz: ${ARG_COMPRESS_WITH_XZ}
-  *            shell: ${ARG_SHELL}
-  *    image-maxsize: ${ARG_IMAGE_MAXSIZE}
-EOF
-
 if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "${ARG_RUN}" ]; then
     echo 'ERROR: You must specify either a script-path or run input, but not both.'
     exit 1
@@ -51,10 +39,10 @@ else
 fi
 
 case "$(file -b --mime-type rpi.img)" in
-    application/x-xz) mv -v rpi.img rpi.img.xz && xz -d rpi.img.xz ;;
-    application/gzip) mv -v rpi.img rpi.img.gz && gzip -d rpi.img.gz ;;
-    application/x-bzip2) mv -v rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
-    application/x-lzma) mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
+    application/x-xz) echo 'Decompressing with xz' && mv -v rpi.img rpi.img.xz && xz -d rpi.img.xz ;;
+    application/gzip) echo 'Decompressing with gzip' && mv -v rpi.img rpi.img.gz && gzip -d rpi.img.gz ;;
+    application/x-bzip2) echo 'Decompressing with bzip2' && mv -v rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
+    application/x-lzma) echo 'Decompressing with lzma' && mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
 esac
 
 echo "Temporarily expanding image to ${ARG_IMAGE_MAXSIZE}"
