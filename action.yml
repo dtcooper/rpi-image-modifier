@@ -47,12 +47,20 @@ runs:
   using: "composite"
   steps:
     -
+      name: Set cache key
+      id: cache-key
+      if: inputs.cache == 'true'
+      shell: bash
+      env:
+        ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
+      run: |
+        echo "key=$(basename "${ARG_BASE_IMAGE_URL}")" >> "${GITHUB_OUTPUT}"
+    -
       name: Use cache
-      id: cache
       if: inputs.cache == 'true'
       uses: actions/cache@v3
       with:
-        key: ${{ inputs.base-image-url }}
+        key: ${{ steps.cache-key.outputs.key }}
         path: /tmp/rpi-cached.img
     -
       name: Modify Raspberry Pi OS image
