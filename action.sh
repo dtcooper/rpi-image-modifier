@@ -117,7 +117,7 @@ echo "Moving image to ${ARG_IMAGE_PATH}"
 mv -v rpi.img "${ORIG_DIR}/${ARG_IMAGE_PATH}"
 
 if [ "${ARG_COMPRESS_WITH_XZ}" ]; then
-    echo 'Compressing image using xz'
+    echo 'Compressing image using xz (this may take a while)'
     xz -T0 "${ORIG_DIR}/${ARG_IMAGE_PATH}"
     ARG_IMAGE_PATH="${ARG_IMAGE_PATH}.xz"
 fi
