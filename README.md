@@ -13,6 +13,7 @@ GitHub Action to modify a base Docker image
 | `mount-repository` | Temporary mount repository at /mounted-github-repo/ for copying files                 | `'true'`                |
 | `compress-with-xz` | Compress final image with xz (image-path will have an .xz extension added)            | `'false'`               |
 | `shell`            | Shell in container to execute script                                                  | `'/bin/bash'`           |
+| `cache`            | Cache image file located at base-image-url                                            | `'false'`               |
 | `image-maxsize`    | That maximum size of the modified image (needs to fit on disk)                        | `'12G'`                 |
 
 
@@ -46,6 +47,7 @@ jobs:
             apt-get install -y python3-pygame
           image-path: 2023-12-05-raspios-bookworm-arm64-lite-with-pygame.img
           compress-with-xz: true
+          cache: true
       -
         name: Update build artifact
         uses: actions/upload-artifact@v3

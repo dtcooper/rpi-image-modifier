@@ -34,8 +34,14 @@ cd "${TEMP_DIR}"
 if [ -e rpi.img ]; then
     echo 'TESTING: rpi.img already exists'
 else
-    echo "Downloading ${ARG_BASE_IMAGE_URL}..."
-    wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
+
+    if [ "${ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
+        echo "Using cached image for ${ARG_BASE_IMAGE_URL}"
+        mv -v /tmp/rpi-cached.img rpi.img
+    else
+        echo "Downloading ${ARG_BASE_IMAGE_URL}..."
+        wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
+    fi
 fi
 
 case "$(file -b --mime-type rpi.img)" in
@@ -101,6 +107,13 @@ echo 'Shrinking image'
 sudo pishrink.sh rpi.img
 
 echo "Moving image to ${ARG_IMAGE_PATH}"
+
+if [ "${ARG_CACHE}" ]; then
+    echo 'Copying image for cache'
+    cp -v rpi.img /tmp/rpi-cached.img
+fi
+
+echo "Moving image to ${ARG_IMAGE_PATH}"
 mv -v rpi.img "${ORIG_DIR}/${ARG_IMAGE_PATH}"
 
 if [ "${ARG_COMPRESS_WITH_XZ}" ]; then
@@ -109,4 +122,5 @@ if [ "${ARG_COMPRESS_WITH_XZ}" ]; then
     ARG_IMAGE_PATH="${ARG_IMAGE_PATH}.xz"
 fi
 
+echo "Setting output: image-path=${ARG_IMAGE_PATH}"
 echo "image-path=${ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"

@@ -49,7 +49,7 @@ jobs:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
           script-path: test/script.sh
           image-path: hi-mom.img
-          compress-with-xz: true
+          cache: true
       -
         name: Confirm output
         shell: bash
@@ -58,6 +58,7 @@ jobs:
 
   from-docs:
     runs-on: ubuntu-latest
+    name: Docs example
     steps:
       -
         name: Add pygame to Raspberry Pi OS Bookworm
@@ -70,6 +71,7 @@ jobs:
             apt-get install -y python3-pygame
           image-path: 2023-12-05-raspios-bookworm-arm64-lite-with-pygame.img
           compress-with-xz: true
+          cache: true
       -
         name: Update build artifact
         uses: actions/upload-artifact@v3

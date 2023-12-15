@@ -29,6 +29,10 @@ inputs:
     description: 'Shell in container to execute script'
     required: false
     default: '/bin/bash'
+  cache:
+    description: 'Cache image file located at base-image-url'
+    required: false
+    default: 'false'
   image-maxsize:
     description: 'That maximum size of the modified image (needs to fit on disk)'
     required: false
@@ -43,6 +47,14 @@ runs:
   using: "composite"
   steps:
     -
+      name: Use cache
+      id: cache
+      if: inputs.cache == 'true'
+      uses: actions/cache@v3
+      with:
+        key: ${{ inputs.base-image-url }}
+        path: /tmp/rpi-cached.img
+    -
       name: Modify Raspberry Pi OS image
       shell: bash
       id: modify-image
@@ -54,5 +66,6 @@ runs:
         ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
         ARG_COMPRESS_WITH_XZ: ${{ inputs.compress-with-xz == 'true' && '1' || '' }}
         ARG_SHELL: ${{ inputs.shell }}
+        ARG_CACHE: ${{ inputs.cache == 'true' && '1' || '' }}
         ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run: "${GITHUB_ACTION_PATH}/action.sh"
