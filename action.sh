@@ -73,7 +73,8 @@ SCRIPT_NAME="/_$(pwgen -s1 12).sh"
 
 if [ "$ARG_RUN" ]; then
     echo "Generating script to run in image container"
-    echo "$ARG_RUN" | sudo tee "mnt${SCRIPT_NAME}"
+    echo -e "set -e\n" | sudo tee "mnt${SCRIPT_NAME}"
+    echo "$ARG_RUN" | sudo tee -a "mnt${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
     sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
