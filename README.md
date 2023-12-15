@@ -39,7 +39,7 @@ jobs:
       -
         name: Add pygame to Raspberry Pi OS Bookworm
         uses: dtcooper/rpi-image-modifier@main
-        id: modify-image
+        id: create-image
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
           run: |
@@ -49,10 +49,12 @@ jobs:
           compress-with-xz: true
           cache: true
       -
-        name: Update build artifact
-        uses: actions/upload-artifact@v3
+        name: Upload build artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: modified-image
-          path: ${{ steps.modify-image.outputs.image-path }}
-          retention-days: 1
+          name: built-image
+          path: ${{ steps.create-image.outputs.image-path }}
+          if-no-files-found: error
+          retention-days: 2
+          compression-level: 0  # Already compressed with xz above
 ```
