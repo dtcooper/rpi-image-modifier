@@ -20,7 +20,8 @@ jobs:
         uses: dtcooper/rpi-image-modifier@main
         id: image-modifier-test
         with:
-          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
+          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
+          cache: true
           run: |
             echo 'hi mom'
             pwd
