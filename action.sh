@@ -106,7 +106,7 @@ sudo umount -vR mnt
 sudo losetup -d "${LOOPBACK_DEV}"
 
 echo 'Shrinking image'
-sudo pishrink.sh rpi.img
+sudo pishrink.sh -s rpi.img
 
 if [ "${ARG_CACHE}" -a "${GOT_CACHE_MISS}" ]; then
     echo 'Copying image for cache (got a cache miss)'
