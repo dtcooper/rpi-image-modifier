@@ -33,16 +33,17 @@ cd "${TEMP_DIR}"
 
 if [ -e rpi.img ]; then
     echo 'TESTING: rpi.img already exists'
-    GOT_CACHE_MISS=
 else
     if [ "${ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
         echo "Using cached image for ${ARG_BASE_IMAGE_URL}"
         mv -v /tmp/rpi-cached.img rpi.img
-        GOT_CACHE_MISS=
     else
         echo "Downloading ${ARG_BASE_IMAGE_URL}..."
         wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
-        GOT_CACHE_MISS=1
+        if [ "${ARG_CACHE}" ]; then
+            echo 'Copying image for cache (got a cache miss)'
+            cp -v rpi.img /tmp/rpi-cached.img
+        fi
     fi
 fi
 
@@ -107,11 +108,6 @@ sudo losetup -d "${LOOPBACK_DEV}"
 
 echo 'Shrinking image'
 sudo pishrink.sh -s rpi.img
-
-if [ "${ARG_CACHE}" -a "${GOT_CACHE_MISS}" ]; then
-    echo 'Copying image for cache (got a cache miss)'
-    cp -v rpi.img /tmp/rpi-cached.img
-fi
 
 echo "Moving image to ${ARG_IMAGE_PATH}"
 mv -v rpi.img "${ORIG_DIR}/${ARG_IMAGE_PATH}"
