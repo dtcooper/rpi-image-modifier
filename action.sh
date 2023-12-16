@@ -68,13 +68,13 @@ echo 'Resizing second partition'
 sudo resize2fs "${LOOPBACK_DEV}p2"
 
 echo 'Mounting image'
-sudo mount "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
-sudo mount "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
+sudo mount -v "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
+sudo mount -v "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
 
 if [ "$ARG_MOUNT_REPOSITORY" ]; then
     echo "Mounting ${ORIG_DIR} to /mounted-github-repo in image"
     sudo mkdir -v mnt/mounted-github-repo
-    sudo mount -o bind "${ORIG_DIR}" mnt/mounted-github-repo
+    sudo mount -vo bind "${ORIG_DIR}" mnt/mounted-github-repo
 fi
 
 SCRIPT_NAME="/_$(pwgen -s1 12).sh"
@@ -97,18 +97,16 @@ echo '...Done!'
 echo 'Cleaning up image'
 sudo rm -v "mnt${SCRIPT_NAME}"
 if [ "${ARG_MOUNT_REPOSITORY}" ]; then
-    sudo umount mnt/mounted-github-repo
+    sudo umount -v mnt/mounted-github-repo
     sudo rmdir -v mnt/mounted-github-repo
 fi
 
 echo 'Unmounting and removing loopback device'
-sudo umount -R mnt
+sudo umount -vR mnt
 sudo losetup -d "${LOOPBACK_DEV}"
 
 echo 'Shrinking image'
 sudo pishrink.sh rpi.img
-
-echo "Moving image to ${ARG_IMAGE_PATH}"
 
 if [ "${ARG_CACHE}" -a "${GOT_CACHE_MISS}" ]; then
     echo 'Copying image for cache (got a cache miss)'
