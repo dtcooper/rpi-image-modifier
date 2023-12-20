@@ -40,10 +40,6 @@ else
     else
         echo "Downloading ${ARG_BASE_IMAGE_URL}..."
         wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
-        if [ "${ARG_CACHE}" ]; then
-            echo 'Copying image for cache (got a cache miss)'
-            cp -v rpi.img /tmp/rpi-cached.img
-        fi
     fi
 fi
 
@@ -53,6 +49,11 @@ case "$(file -b --mime-type rpi.img)" in
     application/x-bzip2) echo 'Decompressing with bzip2' && mv -v rpi.img rpi.img.bz2 && bzip2 -d rpi.img.bz2 ;;
     application/x-lzma) echo 'Decompressing with lzma' && mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
 esac
+
+if [ "${ARG_CACHE}" ]; then
+    echo 'Copying image for cache (got a cache miss)'
+    cp -v rpi.img /tmp/rpi-cached.img
+fi
 
 echo "Temporarily expanding image to ${ARG_IMAGE_MAXSIZE}"
 fallocate -l "${ARG_IMAGE_MAXSIZE}" rpi.img

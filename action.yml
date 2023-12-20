@@ -54,7 +54,7 @@ runs:
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
       run: |
-        echo "key=rpi-img-mod-1::$(basename "${ARG_BASE_IMAGE_URL}")" >> "${GITHUB_OUTPUT}"
+        echo "key=rpi-img-mod-2::$(basename "${ARG_BASE_IMAGE_URL}")" >> "${GITHUB_OUTPUT}"
     -
       name: Use cache
       if: inputs.cache == 'true'
