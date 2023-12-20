@@ -54,14 +54,14 @@ runs:
       env:
         ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
       run: |
-        echo "key=$(basename "${ARG_BASE_IMAGE_URL}")" >> "${GITHUB_OUTPUT}"
+        echo "key=rpi-img-mod-1::$(basename "${ARG_BASE_IMAGE_URL}")" >> "${GITHUB_OUTPUT}"
     -
       name: Use cache
       if: inputs.cache == 'true'
       uses: actions/cache@v3
       with:
         # 1 = v1 of the cache key
-        key: rpi-img-mod-1-${{ steps.cache-key.outputs.key }}
+        key: ${{ steps.cache-key.outputs.key }}
         path: /tmp/rpi-cached.img
     -
       name: Modify Raspberry Pi OS image
