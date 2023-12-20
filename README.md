@@ -42,12 +42,17 @@ jobs:
         id: create-image
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
-          run: |
-            apt-get update
-            apt-get install -y python3-pygame
           image-path: 2023-12-05-raspios-bookworm-arm64-lite-with-pygame.img
           compress-with-xz: true
           cache: true
+          mount-repository: true
+          run: |
+            # Install pytgame
+            apt-get update
+            apt-get install -y python3-pygame
+
+            # Copy project README to root directory
+            cp -v /mounted-github-repo/README.md /root
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4

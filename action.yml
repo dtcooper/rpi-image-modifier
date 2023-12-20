@@ -60,7 +60,6 @@ runs:
       if: inputs.cache == 'true'
       uses: actions/cache@v3
       with:
-        # 1 = v1 of the cache key
         key: ${{ steps.cache-key.outputs.key }}
         path: /tmp/rpi-cached.img
     -
