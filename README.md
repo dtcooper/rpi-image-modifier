@@ -37,6 +37,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        name: Checkout repository
+        uses: actions/checkout@v4
+      -
         name: Add pygame to Raspberry Pi OS Bookworm
         uses: dtcooper/rpi-image-modifier@main
         id: create-image
@@ -47,12 +50,12 @@ jobs:
           cache: true
           mount-repository: true
           run: |
+            # Copy project README to root directory
+            cp -v /mounted-github-repo/README.md /root
+
             # Install pytgame
             apt-get update
             apt-get install -y python3-pygame
-
-            # Copy project README to root directory
-            cp -v /mounted-github-repo/README.md /root
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4
