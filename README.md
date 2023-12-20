@@ -41,11 +41,11 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Add pygame to Raspberry Pi OS Bookworm
-        uses: dtcooper/rpi-image-modifier@main
+        uses: dtcooper/rpi-image-modifier@v1
         id: create-image
         with:
-          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-06/2023-12-05-raspios-bookworm-arm64-lite.img.xz
-          image-path: 2023-12-05-raspios-bookworm-arm64-lite-with-pygame.img
+          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
+          image-path: 2023-12-11-raspios-bookworm-arm64-lite-with-pygame.img
           compress-with-xz: true
           cache: true
           mount-repository: true
