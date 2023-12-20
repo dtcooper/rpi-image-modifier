@@ -30,17 +30,14 @@ ORIG_DIR="$(pwd -P)"
 mkdir -vp "${TEMP_DIR}/mnt"
 cd "${TEMP_DIR}"
 
-
-if [ -e rpi.img ]; then
-    echo 'TESTING: rpi.img already exists'
+NEEDS_CACHE_COPY=
+if [ "${ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
+    echo "Using cached image for ${ARG_BASE_IMAGE_URL}"
+    mv -v /tmp/rpi-cached.img rpi.img
 else
-    if [ "${ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
-        echo "Using cached image for ${ARG_BASE_IMAGE_URL}"
-        mv -v /tmp/rpi-cached.img rpi.img
-    else
-        echo "Downloading ${ARG_BASE_IMAGE_URL}..."
-        wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
-    fi
+    echo "Downloading ${ARG_BASE_IMAGE_URL}..."
+    wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
+    NEEDS_CACHE_COPY=1
 fi
 
 case "$(file -b --mime-type rpi.img)" in
@@ -50,7 +47,7 @@ case "$(file -b --mime-type rpi.img)" in
     application/x-lzma) echo 'Decompressing with lzma' && mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
 esac
 
-if [ "${ARG_CACHE}" ]; then
+if [ "${ARG_CACHE}" ] && [ "${NEEDS_CACHE_COPY}" ]; then
     echo 'Copying image for cache (got a cache miss)'
     cp -v rpi.img /tmp/rpi-cached.img
 fi
