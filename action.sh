@@ -108,6 +108,8 @@ if [ "${__ARG_ENV_VARS}" ]; then
     done
 fi
 
+# Make sure these two lines match, for debug printing
+echo 'Running:' systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${EXTRA_SYSTEMD_NSPAWN_ARGS[@]}" "${__ARG_SHELL}" "${SCRIPT_NAME}"
 sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${EXTRA_SYSTEMD_NSPAWN_ARGS[@]}" "${__ARG_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
