@@ -18,11 +18,6 @@ if [ "${__ARG_ENV_VARS}" ] && echo "${__ARG_ENV_VARS}" | grep -vqE '^([a-zA-Z_][
     exit 1
 fi
 
-if [ "${__ARG_ENV_VARS}" -a "$(. /etc/os-release ; echo "${VERSION_ID}")" = '20.04' ]; then
-    echo 'ERROR: Ubuntu 20.04 not supported when env-vars is set (incompataible version of systemd-nspawn)'
-    exit 1
-fi
-
 sudo apt-get update
 
 # qemu-user-static automatically installs aarch64/arm interpeters
@@ -105,17 +100,15 @@ fi
 sudo chmod +x "mnt${SCRIPT_NAME}"
 
 echo "Running script in image container using ${__ARG_SHELL}"
-EXTRA_SYSTEMD_NSPAWN_ARGS=
+EXTRA_SYSTEMD_NSPAWN_ARGS=()
 if [ "${__ARG_ENV_VARS}" ]; then
     echo "Using environment variables: $(echo "${__ARG_ENV_VARS}" | sed 's/,/, /g')"
-    EXTRA_SYSTEMD_NSPAWN_ARGS="--setenv=$(echo "${__ARG_ENV_VARS}" | sed 's/,/ --setenv=/g')"
+    for ENV_VAR in $(echo "${__ARG_ENV_VARS}" | sed 's/,/ /g'); do
+        EXTRA_SYSTEMD_NSPAWN_ARGS+=("--setenv=${ENV_VAR}=${!ENV_VAR}")
+    done
 fi
 
-echo '==== BEGIN DEBUG ===='
-env
-echo '===== END DEBUG ====='
-
-sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi ${EXTRA_SYSTEMD_NSPAWN_ARGS} "${__ARG_SHELL}" "${SCRIPT_NAME}"
+sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${EXTRA_SYSTEMD_NSPAWN_ARGS[@]}" "${__ARG_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
 
