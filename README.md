@@ -77,12 +77,9 @@ jobs:
 ```
 
 
-## Changelog
+## Changelog &amp; License
 
-Changelog [can be found here: `CHANGELOG.md`](CHANGELOG.md).
-
-
-## License
+Changelog can be found in the [CHANGELOG.md](CHANGELOG.md) file.
 
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT)
 &mdash; see the [LICENSE](LICENSE) file for details.
