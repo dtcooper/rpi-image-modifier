@@ -31,7 +31,7 @@ jobs:
         with:
           base-image-url: ${{ matrix.base-image-url }}
           cache: true
-          env-vars: TEST1,TEST2,TEST2,NON_EXISTANT
+          env-vars: TEST1,TEST2,TEST3,NON_EXISTANT
           run: |
             echo 'hi mom'
             pwd
@@ -40,10 +40,10 @@ jobs:
             uname -a
             touch /rpi-image-modified
             echo 'bye mom!'
-            echo "TEST1: '${TEST1}'"
-            echo "TEST2: '${TEST2}'"
-            echo "TEST3: '${TEST3}'"
-            echo "NON_EXISTANT: '${NON_EXISTANT}'"
+            echo "TEST1: '${TEST1}' = 'test1'"
+            echo "TEST2: '${TEST2}' = 'test2'"
+            echo "TEST3: '${TEST3}' = 'test3 with spaces'"
+            echo "NON_EXISTANT: '${NON_EXISTANT}' = ''"
       -
         name: Confirm output
         shell: bash
