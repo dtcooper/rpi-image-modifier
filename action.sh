@@ -104,10 +104,12 @@ EXTRA_SYSTEMD_NSPAWN_ARGS=()
 if [ "${__ARG_ENV_VARS}" ]; then
     echo "Using environment variables: $(echo "${__ARG_ENV_VARS}" | sed 's/,/, /g')"
     for ENV_VAR in $(echo "${__ARG_ENV_VARS}" | sed 's/,/ /g'); do
+        echo "DEBUG: --setenv=${ENV_VAR}=${!ENV_VAR}"
         EXTRA_SYSTEMD_NSPAWN_ARGS+=("--setenv=${ENV_VAR}=${!ENV_VAR}")
     done
 fi
 
+echo "DEBUG:" systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${EXTRA_SYSTEMD_NSPAWN_ARGS[@]}" "${__ARG_SHELL}" "${SCRIPT_NAME}"
 sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${EXTRA_SYSTEMD_NSPAWN_ARGS[@]}" "${__ARG_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
