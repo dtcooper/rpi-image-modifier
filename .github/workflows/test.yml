@@ -13,14 +13,19 @@ concurrency:
 jobs:
   test-bookworm-arm64:
     runs-on: ubuntu-22.04
-    name: Test Bookworm (arm64)
+    name: Test arm64
+    strategy:
+      matrix:
+        base-image-url:
+          - https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
+          - https://downloads.raspberrypi.com/raspios_oldstable_lite_arm64/images/raspios_oldstable_lite_arm64-2023-12-06/2023-12-05-raspios-bullseye-arm64-lite.img.xz
     steps:
       -
         name: Test action
         uses: dtcooper/rpi-image-modifier@main
         id: image-modifier-test
         with:
-          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
+          base-image-url: ${{ matrix.base-image-url }}
           cache: true
           run: |
             echo 'hi mom'
@@ -38,7 +43,12 @@ jobs:
 
   test-bookworm-armhf:
     runs-on: ubuntu-20.04
-    name: Test Bookworm (armhf)
+    name: Test armhf
+    strategy:
+      matrix:
+        base-image-url:
+          - https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
+          - https://downloads.raspberrypi.com/raspios_oldstable_lite_armhf/images/raspios_oldstable_lite_armhf-2023-12-06/2023-12-05-raspios-bullseye-armhf-lite.img.xz
     steps:
       -
         name: Checkout
@@ -48,7 +58,7 @@ jobs:
         uses: dtcooper/rpi-image-modifier@main
         id: image-modifier-test
         with:
-          base-image-url: https://downloads.raspberrypi.com/raspios_lite_armhf/images/raspios_lite_armhf-2023-12-11/2023-12-11-raspios-bookworm-armhf-lite.img.xz
+          base-image-url: ${{ matrix.base-image-url }}
           script-path: test/script.sh
           image-path: hi-mom.img
           cache: true
