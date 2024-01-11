@@ -68,7 +68,14 @@ sudo resize2fs "${LOOPBACK_DEV}p2"
 
 echo 'Mounting image'
 sudo mount -v "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
-sudo mount -v "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/boot"
+
+if grep -qF /boot/firmware; then
+    BOOT_MOUNTPOINT=/boot/firmware
+else
+    BOOT_MOUNTPOINT=/boot
+fi
+echo "Mounting boot partition to ${BOOT_MOUNTPOINT}"
+sudo mount -v "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/${BOOT_MOUNTPOINT}"
 
 if [ "$ARG_MOUNT_REPOSITORY" ]; then
     echo "Mounting ${ORIG_DIR} to /mounted-github-repo in image"
