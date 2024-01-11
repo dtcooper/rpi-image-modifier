@@ -59,7 +59,7 @@ jobs:
             # Copy project README to root directory
             cp -v /mounted-github-repo/README.md /root
 
-            # Install pytgame
+            # Install pygame
             apt-get update
             apt-get install -y python3-pygame
 
