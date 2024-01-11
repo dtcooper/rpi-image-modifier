@@ -2,7 +2,9 @@
 
 GitHub Action to modify a base Docker image
 
-## Action Inputs
+## Usage
+
+### Action Inputs
 
 |  Input name        |  Description                                                                          |  Default                |
 |-------------------:|---------------------------------------------------------------------------------------|-------------------------|
@@ -18,14 +20,14 @@ GitHub Action to modify a base Docker image
 | `image-maxsize`    | That maximum size of the modified image (needs to fit on disk)                        | `'12G'`                 |
 
 
-## Action Outputs
+### Action Outputs
 
 | Output name  | Description                                                                                                             |
 |------------- |-------------------------------------------------------------------------------------------------------------------------|
 | `image-path` | Filename of image, will be same as image-path unless compress-with-xz is set in which case it will have a .xz extension |
 
 
-## Example
+### Example
 
 ```
 name: ci
@@ -73,3 +75,14 @@ jobs:
           retention-days: 2
           compression-level: 0  # Already compressed with xz above
 ```
+
+
+## Changelog
+
+Changelog [can be found here: `CHANGELOG.md`](CHANGELOG.md).
+
+
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT)
+&mdash; see the [LICENSE](LICENSE) file for details.
