@@ -18,6 +18,11 @@ if [ "${__ARG_ENV_VARS}" ] && echo "${__ARG_ENV_VARS}" | grep -vqE '^([a-zA-Z_][
     exit 1
 fi
 
+if [ "${__ARG_ENV_VARS}" -a "$(. /etc/os-release ; echo "${VERSION_ID}")" = '20.04' ]; then
+    echo 'ERROR: Ubuntu 20.04 not supported when env-vars is set (incompataible version of systemd-nspawn)'
+    exit 1
+fi
+
 sudo apt-get update
 
 # qemu-user-static automatically installs aarch64/arm interpeters
