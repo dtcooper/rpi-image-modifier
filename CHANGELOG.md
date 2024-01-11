@@ -2,7 +2,7 @@
 
 ## v1.1.1
 
-* Be and show how we'll execute `systemd-nspawn`
+* Be verbose and show how we'll execute `systemd-nspawn`
 
 ## v1.1.0
 
