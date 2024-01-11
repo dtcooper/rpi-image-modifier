@@ -69,12 +69,11 @@ sudo resize2fs "${LOOPBACK_DEV}p2"
 echo 'Mounting image'
 sudo mount -v "${LOOPBACK_DEV}p2" "${TEMP_DIR}/mnt"
 
-if grep -qF /boot/firmware; then
+if grep -qF /boot/firmware "${TEMP_DIR}/mnt/etc/fstab"; then
     BOOT_MOUNTPOINT=/boot/firmware
 else
     BOOT_MOUNTPOINT=/boot
 fi
-echo "Mounting boot partition to ${BOOT_MOUNTPOINT}"
 sudo mount -v "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/${BOOT_MOUNTPOINT}"
 
 if [ "$ARG_MOUNT_REPOSITORY" ]; then
