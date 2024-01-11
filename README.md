@@ -8,7 +8,8 @@ GitHub Action to modify a base Docker image
 |-------------------:|---------------------------------------------------------------------------------------|-------------------------|
 | `base-image-url`   | Base Raspberry Pi OS image URL (required)                                             | -                       |
 | `script-path`      | Path of script to run to modify image (one of script-path or run is required)         | -                       |
-| `run`              | Bash script containers to run to modify image (one of script-path or run is required) | -                       |
+| `run`              | Script contents run to modify image (one of script-path or run is required)           | -                       |
+| `env-vars`         | Comma-separated environment variables to pass to the script, example: `ONE,TWO,THREE` | -                       |
 | `image-path`       | What to name the modified image                                                       | `'rpi-os-modified.img'` |
 | `mount-repository` | Temporary mount repository at /mounted-github-repo/ for copying files                 | `'true'`                |
 | `compress-with-xz` | Compress final image with xz (image-path will have an .xz extension added)            | `'false'`               |
@@ -43,12 +44,15 @@ jobs:
         name: Add pygame to Raspberry Pi OS Bookworm
         uses: dtcooper/rpi-image-modifier@v1
         id: create-image
+        env:
+          TEST: 'hi mom!'
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
           image-path: 2023-12-11-raspios-bookworm-arm64-lite-with-pygame.img
           compress-with-xz: true
           cache: true
           mount-repository: true
+          env-vars: TEST
           run: |
             # Copy project README to root directory
             cp -v /mounted-github-repo/README.md /root
@@ -56,6 +60,9 @@ jobs:
             # Install pytgame
             apt-get update
             apt-get install -y python3-pygame
+
+            # Should print 'hi mom!'
+            echo "$TEST"
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4

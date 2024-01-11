@@ -8,8 +8,13 @@ if [ "${RUNNER_OS}" != "Linux" ]; then
     exit 1
 fi
 
-if [ -z "${ARG_SCRIPT_PATH}" -a -z "${ARG_RUN}" ] || [ "${ARG_SCRIPT_PATH}" -a "${ARG_RUN}" ]; then
+if [ -z "${__ARG_SCRIPT_PATH}" -a -z "${__ARG_RUN}" ] || [ "${__ARG_SCRIPT_PATH}" -a "${__ARG_RUN}" ]; then
     echo 'ERROR: You must specify either a script-path or run input, but not both.'
+    exit 1
+fi
+
+if [ "${__ARG_ENV_VARS}" ] && echo "${__ARG_ENV_VARS}" | grep -vqE '^([a-zA-Z_][a-zA-Z_0-9]*,)*([a-zA-Z_][a-zA-Z_0-9]*)$'; then
+    echo 'ERROR: Argument env-vars was malformed, must be a comma-separated list of variables.'
     exit 1
 fi
 
@@ -31,12 +36,12 @@ mkdir -vp "${TEMP_DIR}/mnt"
 cd "${TEMP_DIR}"
 
 NEEDS_CACHE_COPY=
-if [ "${ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
-    echo "Using cached image for ${ARG_BASE_IMAGE_URL}"
+if [ "${__ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
+    echo "Using cached image for ${__ARG_BASE_IMAGE_URL}"
     mv -v /tmp/rpi-cached.img rpi.img
 else
-    echo "Downloading ${ARG_BASE_IMAGE_URL}..."
-    wget -O rpi.img "${ARG_BASE_IMAGE_URL}"
+    echo "Downloading ${__ARG_BASE_IMAGE_URL}..."
+    wget -O rpi.img "${__ARG_BASE_IMAGE_URL}"
     NEEDS_CACHE_COPY=1
 fi
 
@@ -47,13 +52,13 @@ case "$(file -b --mime-type rpi.img)" in
     application/x-lzma) echo 'Decompressing with lzma' && mv -v rpi.img rpi.img.lzma && lzma -d rpi.img.lzma ;;
 esac
 
-if [ "${ARG_CACHE}" ] && [ "${NEEDS_CACHE_COPY}" ]; then
+if [ "${__ARG_CACHE}" ] && [ "${NEEDS_CACHE_COPY}" ]; then
     echo 'Copying image for cache (got a cache miss)'
     cp -v rpi.img /tmp/rpi-cached.img
 fi
 
-echo "Temporarily expanding image to ${ARG_IMAGE_MAXSIZE}"
-fallocate -l "${ARG_IMAGE_MAXSIZE}" rpi.img
+echo "Temporarily expanding image to ${__ARG_IMAGE_MAXSIZE}"
+fallocate -l "${__ARG_IMAGE_MAXSIZE}" rpi.img
 LOOPBACK_DEV="$(sudo losetup -fP --show rpi.img)"
 echo "Created loopback device ${LOOPBACK_DEV}"
 
@@ -76,7 +81,7 @@ else
 fi
 sudo mount -v "${LOOPBACK_DEV}p1" "${TEMP_DIR}/mnt/${BOOT_MOUNTPOINT}"
 
-if [ "$ARG_MOUNT_REPOSITORY" ]; then
+if [ "$__ARG_MOUNT_REPOSITORY" ]; then
     echo "Mounting ${ORIG_DIR} to /mounted-github-repo in image"
     sudo mkdir -v mnt/mounted-github-repo
     sudo mount -vo bind "${ORIG_DIR}" mnt/mounted-github-repo
@@ -84,24 +89,29 @@ fi
 
 SCRIPT_NAME="/_$(pwgen -s1 12).sh"
 
-if [ "$ARG_RUN" ]; then
+if [ "$__ARG_RUN" ]; then
     echo "Generating script to run in image container"
     echo -e "set -e\n" | sudo tee "mnt${SCRIPT_NAME}"
-    echo "$ARG_RUN" | sudo tee -a "mnt${SCRIPT_NAME}"
+    echo "$__ARG_RUN" | sudo tee -a "mnt${SCRIPT_NAME}"
 else
     echo "Copying script to run in image container"
-    sudo cp -v "${ORIG_DIR}/${ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
+    sudo cp -v "${ORIG_DIR}/${__ARG_SCRIPT_PATH}" "mnt${SCRIPT_NAME}"
 fi
 sudo chmod +x "mnt${SCRIPT_NAME}"
 
-echo "Running script in image container using ${ARG_SHELL}"
-sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi "${ARG_SHELL}" "${SCRIPT_NAME}"
+echo "Running script in image container using ${__ARG_SHELL}"
+EXTRA_SYSTEMD_NSPAWN_ARGS=
+if [ "${__ARG_ENV_VARS}" ]; then
+    echo "Using environment variables: $(echo "${__ARG_ENV_VARS}" | sed 's/,/, /g')"
+    EXTRA_SYSTEMD_NSPAWN_ARGS="--setenv=$(echo "${__ARG_ENV_VARS}" | sed 's/,/ --setenv=/g')"
+fi
+sudo systemd-nspawn --directory="${TEMP_DIR}/mnt" --hostname=raspberrypi ${EXTRA_SYSTEMD_NSPAWN_ARGS} "${__ARG_SHELL}" "${SCRIPT_NAME}"
 
 echo '...Done!'
 
 echo 'Cleaning up image'
 sudo rm -v "mnt${SCRIPT_NAME}"
-if [ "${ARG_MOUNT_REPOSITORY}" ]; then
+if [ "${__ARG_MOUNT_REPOSITORY}" ]; then
     sudo umount -v mnt/mounted-github-repo
     sudo rmdir -v mnt/mounted-github-repo
 fi
@@ -113,14 +123,14 @@ sudo losetup -d "${LOOPBACK_DEV}"
 echo 'Shrinking image'
 sudo pishrink.sh -s rpi.img
 
-echo "Moving image to ${ARG_IMAGE_PATH}"
-mv -v rpi.img "${ORIG_DIR}/${ARG_IMAGE_PATH}"
+echo "Moving image to ${__ARG_IMAGE_PATH}"
+mv -v rpi.img "${ORIG_DIR}/${__ARG_IMAGE_PATH}"
 
-if [ "${ARG_COMPRESS_WITH_XZ}" ]; then
+if [ "${__ARG_COMPRESS_WITH_XZ}" ]; then
     echo 'Compressing image using xz (this may take a while)'
-    xz -T0 "${ORIG_DIR}/${ARG_IMAGE_PATH}"
-    ARG_IMAGE_PATH="${ARG_IMAGE_PATH}.xz"
+    xz -T0 "${ORIG_DIR}/${__ARG_IMAGE_PATH}"
+    __ARG_IMAGE_PATH="${__ARG_IMAGE_PATH}.xz"
 fi
 
-echo "Setting output: image-path=${ARG_IMAGE_PATH}"
-echo "image-path=${ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"
+echo "Setting output: image-path=${__ARG_IMAGE_PATH}"
+echo "image-path=${__ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"

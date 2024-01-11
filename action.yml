@@ -10,7 +10,11 @@ inputs:
     required: false
     default: ''
   run:
-    description: 'Bash script containers to run to modify image (one of script-path or run is required)'
+    description: 'Script contents run to modify image (one of script-path or run is required)'
+    required: false
+    default: ''
+  env-vars:
+    description: 'Comma-separated environment variables to pass to the script, example: ONE,TWO,THREE'
     required: false
     default: ''
   image-path:
@@ -67,13 +71,14 @@ runs:
       shell: bash
       id: modify-image
       env:
-        ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
-        ARG_SCRIPT_PATH: ${{ inputs.script-path }}
-        ARG_RUN: ${{ inputs.run }}
-        ARG_IMAGE_PATH: ${{ inputs.image-path }}
-        ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
-        ARG_COMPRESS_WITH_XZ: ${{ inputs.compress-with-xz == 'true' && '1' || '' }}
-        ARG_SHELL: ${{ inputs.shell }}
-        ARG_CACHE: ${{ inputs.cache == 'true' && '1' || '' }}
-        ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
+        __ARG_BASE_IMAGE_URL: ${{ inputs.base-image-url }}
+        __ARG_SCRIPT_PATH: ${{ inputs.script-path }}
+        __ARG_RUN: ${{ inputs.run }}
+        __ARG_ENV_VARS: ${{ inputs.env-vars}}
+        __ARG_IMAGE_PATH: ${{ inputs.image-path }}
+        __ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
+        __ARG_COMPRESS_WITH_XZ: ${{ inputs.compress-with-xz == 'true' && '1' || '' }}
+        __ARG_SHELL: ${{ inputs.shell }}
+        __ARG_CACHE: ${{ inputs.cache == 'true' && '1' || '' }}
+        __ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}
       run: "${GITHUB_ACTION_PATH}/action.sh"

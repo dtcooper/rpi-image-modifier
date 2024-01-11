@@ -57,16 +57,22 @@ jobs:
         name: Test action
         uses: dtcooper/rpi-image-modifier@main
         id: image-modifier-test
+        env:
+          TEST1: 'test1'
+          TEST2: 'test2'
+          TEST3: 'test3'
         with:
           base-image-url: ${{ matrix.base-image-url }}
           script-path: test/script.sh
           image-path: hi-mom.img
           cache: true
+          env-vars: TEST1,TEST2,TEST3,NON_EXISTANT
       -
         name: Confirm output
         shell: bash
         run: |
           echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
+          echo "'${TEST1}' / '${TEST2}' / '${TEST3}' / '${NON_EXISTANT}'"
 
   from-docs:
     runs-on: ubuntu-latest
@@ -79,12 +85,15 @@ jobs:
         name: Add pygame to Raspberry Pi OS Bookworm
         uses: dtcooper/rpi-image-modifier@v1
         id: create-image
+        env:
+          TEST: 'hi mom!'
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
           image-path: 2023-12-11-raspios-bookworm-arm64-lite-with-pygame.img
           compress-with-xz: true
           cache: true
           mount-repository: true
+          env-vars: TEST
           run: |
             # Copy project README to root directory
             cp -v /mounted-github-repo/README.md /root
@@ -92,6 +101,9 @@ jobs:
             # Install pytgame
             apt-get update
             apt-get install -y python3-pygame
+
+            # Should print 'hi mom!'
+            echo "$TEST"
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4
