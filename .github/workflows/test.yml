@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   test-bookworm-arm64:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     name: Test arm64
     strategy:
       matrix:
@@ -24,9 +24,14 @@ jobs:
         name: Test action
         uses: dtcooper/rpi-image-modifier@main
         id: image-modifier-test
+        env:
+          TEST1: 'test1'
+          TEST2: 'test2'
+          TEST3: 'test3 with spaces'
         with:
           base-image-url: ${{ matrix.base-image-url }}
           cache: true
+          env-vars: TEST1,TEST2,TEST2,NON_EXISTANT
           run: |
             echo 'hi mom'
             pwd
@@ -35,6 +40,10 @@ jobs:
             uname -a
             touch /rpi-image-modified
             echo 'bye mom!'
+            echo "TEST1: '${TEST1}'"
+            echo "TEST2: '${TEST2}'"
+            echo "TEST3: '${TEST3}'"
+            echo "NON_EXISTANT: '${NON_EXISTANT}'"
       -
         name: Confirm output
         shell: bash
@@ -42,7 +51,7 @@ jobs:
           echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
 
   test-bookworm-armhf:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Test armhf
     strategy:
       matrix:
@@ -57,22 +66,16 @@ jobs:
         name: Test action
         uses: dtcooper/rpi-image-modifier@main
         id: image-modifier-test
-        env:
-          TEST1: 'test1'
-          TEST2: 'test2'
-          TEST3: 'test3'
         with:
           base-image-url: ${{ matrix.base-image-url }}
           script-path: test/script.sh
           image-path: hi-mom.img
           cache: true
-          env-vars: TEST1,TEST2,TEST3,NON_EXISTANT
       -
         name: Confirm output
         shell: bash
         run: |
           echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
-          echo "'${TEST1}' / '${TEST2}' / '${TEST3}' / '${NON_EXISTANT}'"
 
   from-docs:
     runs-on: ubuntu-latest
@@ -83,7 +86,7 @@ jobs:
         uses: actions/checkout@v4
       -
         name: Add pygame to Raspberry Pi OS Bookworm
-        uses: dtcooper/rpi-image-modifier@v1
+        uses: dtcooper/rpi-image-modifier@main  # Make sure to switch to @main
         id: create-image
         env:
           TEST: 'hi mom!'
