@@ -3,6 +3,7 @@
 ## v1.2.0
 
 * Add `shrink` input and `image-size` output
+* Colorize logging
 
 ## v1.1.1
 
