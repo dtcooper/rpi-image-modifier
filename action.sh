@@ -3,13 +3,15 @@
 set -e
 
 echo_green() {
-    echo -e "\x1B[32;1m>>> $@\x1B[0m"
+    echo -e "\x1B[32;1m>>> \x1B[0m\x1B[32;1m$@\x1B[0m"
 }
 
 error() {
     echo -e "\x1B[31;1mERROR: $@\x1B[0m"
     exit 1
 }
+
+echo_green 'Starting rpi-image-modifier action'
 
 # Check we're Linux and have the proper arguments
 if [ "${RUNNER_OS}" != "Linux" ]; then
@@ -23,6 +25,8 @@ fi
 if [ "${__ARG_ENV_VARS}" ] && echo "${__ARG_ENV_VARS}" | grep -vqE '^([a-zA-Z_][a-zA-Z_0-9]*,)*([a-zA-Z_][a-zA-Z_0-9]*)$'; then
     echo_red 'Argument env-vars was malformed, must be a comma-separated list of variables.'
 fi
+
+echo_green 'Installing dependencies'
 
 sudo apt-get update
 
