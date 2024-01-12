@@ -3,11 +3,11 @@
 set -e
 
 echo_green() {
-    echo "### \x1B[32;1m$@\x1B[0m"
+    echo -e "### \x1B[32;1m$@\x1B[0m"
 }
 
 echo_red() {
-    echo "### \x1B[31;1m$@\x1B[0m"
+    echo -e "### \x1B[31;1m$@\x1B[0m"
 }
 
 # Check we're Linux and have the proper arguments
