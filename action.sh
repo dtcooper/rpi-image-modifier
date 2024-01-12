@@ -3,27 +3,25 @@
 set -e
 
 echo_green() {
-    echo -e "### \x1B[32;1m$@\x1B[0m"
+    echo -e "\x1B[32;1m>>> $@\x1B[0m"
 }
 
-echo_red() {
-    echo -e "### \x1B[31;1m$@\x1B[0m"
+error() {
+    echo -e "\x1B[31;1mERROR: $@\x1B[0m"
+    exit 1
 }
 
 # Check we're Linux and have the proper arguments
 if [ "${RUNNER_OS}" != "Linux" ]; then
-    echo_red "ERROR: ${RUNNER_OS} not supported"
-    exit 1
+    error "${RUNNER_OS} not supported"
 fi
 
 if [ -z "${__ARG_SCRIPT_PATH}" -a -z "${__ARG_RUN}" ] || [ "${__ARG_SCRIPT_PATH}" -a "${__ARG_RUN}" ]; then
-    echo_red 'ERROR: You must specify either a script-path or run input, but not both.'
-    exit 1
+    echo_red 'You must specify either a script-path or run input, but not both.'
 fi
 
 if [ "${__ARG_ENV_VARS}" ] && echo "${__ARG_ENV_VARS}" | grep -vqE '^([a-zA-Z_][a-zA-Z_0-9]*,)*([a-zA-Z_][a-zA-Z_0-9]*)$'; then
-    echo_red 'ERROR: Argument env-vars was malformed, must be a comma-separated list of variables.'
-    exit 1
+    echo_red 'Argument env-vars was malformed, must be a comma-separated list of variables.'
 fi
 
 sudo apt-get update
