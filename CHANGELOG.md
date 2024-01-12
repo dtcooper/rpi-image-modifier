@@ -1,6 +1,6 @@
 # Changelog for Raspberry Pi OS Image Modifier GitHub Action
 
-## **UNRELEASED**
+## v1.2.0
 
 * Add `shrink` input and `image-size` output
 * Colorize logging
