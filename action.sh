@@ -156,6 +156,9 @@ if [ "${__ARG_COMPRESS_WITH_XZ}" ]; then
     __ARG_IMAGE_PATH="${__ARG_IMAGE_PATH}.xz"
 fi
 
+echo_green "Cleaning up temporary directory ${TEMP_DIR}"
+rm -rf "${TEMP_DIR}"
+
 echo_green "Setting outputs: image-path=${__ARG_IMAGE_PATH}, image-size=${IMAGE_SIZE}"
 echo "image-path=${__ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"
 echo "image-size=${IMAGE_SIZE}" >> "${GITHUB_OUTPUT}"
