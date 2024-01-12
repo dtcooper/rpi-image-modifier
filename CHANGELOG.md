@@ -1,5 +1,9 @@
 # Changelog for Raspberry Pi OS Image Modifier GitHub Action
 
+## v1.2.1
+
+* Clean up temporary directory after running
+
 ## v1.2.0
 
 * Add `shrink` input and `image-size` output
