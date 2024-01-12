@@ -1,5 +1,9 @@
 # Changelog for Raspberry Pi OS Image Modifier GitHub Action
 
+## v1.2.0
+
+* Add `shrink` input and `image-size` output
+
 ## v1.1.1
 
 * Be verbose and show how we'll execute `systemd-nspawn`

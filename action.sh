@@ -25,9 +25,11 @@ sudo apt-get install -y --no-install-recommends \
     pwgen \
     qemu-user-static \
     systemd-container
-sudo wget -O /usr/local/bin/pishrink.sh \
-    https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
-sudo chmod +x /usr/local/bin/pishrink.sh
+
+if [ "${__ARG_SHRINK}" ]; then
+    sudo wget -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+    sudo chmod +x /usr/local/bin/pishrink.sh
+fi
 
 TEMP_DIR="/tmp/rpi-image-modifier-$(pwgen -s1 8)"
 ORIG_DIR="$(pwd -P)"
@@ -125,8 +127,15 @@ echo 'Unmounting and removing loopback device'
 sudo umount -vR mnt
 sudo losetup -d "${LOOPBACK_DEV}"
 
-echo 'Shrinking image'
-sudo pishrink.sh -s rpi.img
+if [ "${__ARG_SHRINK}" ]; then
+    echo 'Shrinking image'
+    sudo pishrink.sh -s rpi.img
+else
+    echo 'Not shrinking image'
+fi
+
+IMAGE_SIZE="$(du -b rpi.img | awk '{ print $1 }')"
+echo "Image size: ${IMAGE_SIZE} bytes"
 
 echo "Moving image to ${__ARG_IMAGE_PATH}"
 mv -v rpi.img "${ORIG_DIR}/${__ARG_IMAGE_PATH}"
@@ -139,3 +148,4 @@ fi
 
 echo "Setting output: image-path=${__ARG_IMAGE_PATH}"
 echo "image-path=${__ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"
+echo "image-size=${IMAGE_SIZE}" >> "${GITHUB_OUTPUT}"

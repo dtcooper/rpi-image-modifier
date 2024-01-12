@@ -29,6 +29,10 @@ inputs:
     description: 'Compress final image with xz (image-path will have an .xz extension added)'
     required: false
     default: 'false'
+  shrink:
+    description: 'Shrink final image using PiShrink (https://github.com/Drewsif/PiShrink)'
+    required: false
+    default: 'true'
   shell:
     description: 'Shell in container to execute script'
     required: false
@@ -46,6 +50,9 @@ outputs:
   image-path:
     description: 'Filename of image, will be same as image-path unless compress-with-xz is set in which case it will have a .xz extension'
     value: ${{ steps.modify-image.outputs.image-path }}
+  image-size:
+    description: 'Size of image, as it was before xz compression was optionally applied'
+    value: ${{ steps.modify-image.outputs.image-size }}
 
 runs:
   using: "composite"
@@ -78,6 +85,7 @@ runs:
         __ARG_IMAGE_PATH: ${{ inputs.image-path }}
         __ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
         __ARG_COMPRESS_WITH_XZ: ${{ inputs.compress-with-xz == 'true' && '1' || '' }}
+        __ARG_SHRINK: ${{ inputs.shrink == 'true' && '1' || '' }}
         __ARG_SHELL: ${{ inputs.shell }}
         __ARG_CACHE: ${{ inputs.cache == 'true' && '1' || '' }}
         __ARG_IMAGE_MAXSIZE: ${{ inputs.image-maxsize }}

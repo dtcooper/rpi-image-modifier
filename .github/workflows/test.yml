@@ -49,6 +49,7 @@ jobs:
         shell: bash
         run: |
           echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
+          echo 'Image size: ${{ steps.image-modifier-test.outputs.image-size }}'
 
   test-bookworm-armhf:
     runs-on: ubuntu-22.04
@@ -71,11 +72,13 @@ jobs:
           script-path: test/script.sh
           image-path: hi-mom.img
           cache: true
+          shrink: false
       -
         name: Confirm output
         shell: bash
         run: |
           echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
+          echo 'Image size: ${{ steps.image-modifier-test.outputs.image-size }}'
 
   from-docs:
     runs-on: ubuntu-latest
