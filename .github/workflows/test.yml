@@ -48,8 +48,9 @@ jobs:
         name: Confirm output
         shell: bash
         run: |
-          echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
-          echo 'Image size: ${{ steps.image-modifier-test.outputs.image-size }}'
+          echo '     Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
+          echo '     Image size: ${{ steps.image-modifier-test.outputs.image-size }}'
+          echo 'Image sha256sum: ${{ steps.image-modifier-test.outcome.image-sha256sum }}'
 
   test-bookworm-armhf:
     runs-on: ubuntu-22.04
@@ -77,8 +78,9 @@ jobs:
         name: Confirm output
         shell: bash
         run: |
-          echo 'Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
-          echo 'Image size: ${{ steps.image-modifier-test.outputs.image-size }}'
+          echo '     Image path: ${{ steps.image-modifier-test.outputs.image-path }}'
+          echo '     Image size: ${{ steps.image-modifier-test.outputs.image-size }}'
+          echo 'Image sha256sum: ${{ steps.image-modifier-test.outcome.image-sha256sum }}'
 
   from-docs:
     runs-on: ubuntu-latest
