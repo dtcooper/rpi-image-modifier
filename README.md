@@ -16,7 +16,7 @@ GitHub Action to modify a base Docker image
 | `mount-repository` | Temporary mount repository at /mounted-github-repo/ for copying files                 | `'true'`                |
 | `compress-with-xz` | Compress final image with xz (`image-path` output will have an .xz extension added)   | `'false'`               |
 | `extra-xz-args`    | Extra arguments to pass to the xz command                                             | `''`                    |
-| `shrink`           | Shrink final image using PiShrink (<https://github.com/Drewsif/PiShrink>)             | `'true'`               |
+| `shrink`           | Shrink final image using PiShrink (<https://github.com/Drewsif/PiShrink>)             | `'true'`                |
 | `shell`            | Shell in container to execute script                                                  | `'/bin/bash'`           |
 | `cache`            | Cache image file located at base-image-url                                            | `'false'`               |
 | `image-maxsize`    | That maximum size of the modified image (needs to fit on disk)                        | `'12G'`                 |
@@ -24,10 +24,11 @@ GitHub Action to modify a base Docker image
 
 ### Action Outputs
 
-| Output name  | Description                                                                                                             |
-|------------- |-------------------------------------------------------------------------------------------------------------------------|
-| `image-path` | Filename of image, will be same as image-path unless compress-with-xz is set in which case it will have a .xz extension |
-
+| Output name       | Description                                                                                                             |
+|------------------ |-------------------------------------------------------------------------------------------------------------------------|
+| `image-path`      | Filename of image, will be same as image-path unless compress-with-xz is set in which case it will have a .xz extension |
+| `image-size`      | Size of image, as it was before xz compression was optionally applied                                                   |
+| `image-sha256sum` | SHA256 sum of image file after xz compression is optionally applied                                                     |
 
 ### Example
 

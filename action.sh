@@ -159,6 +159,9 @@ fi
 echo_green "Cleaning up temporary directory ${TEMP_DIR}"
 rm -rf "${TEMP_DIR}"
 
-echo_green "Setting outputs: image-path=${__ARG_IMAGE_PATH}, image-size=${IMAGE_SIZE}"
+IMAGE_SHA256SUM="$(sha256sum "${__ARG_IMAGE_PATH}" | awk '{ print $1 }')"
+
+echo_green "Setting outputs: image-path=${__ARG_IMAGE_PATH}, image-size=${IMAGE_SIZE}, image-sha256sum=${IMAGE_SHA256SUM}"
 echo "image-path=${__ARG_IMAGE_PATH}" >> "${GITHUB_OUTPUT}"
 echo "image-size=${IMAGE_SIZE}" >> "${GITHUB_OUTPUT}"
+echo "image-sha256sum=${IMAGE_SHA256SUM}" >> "${GITHUB_OUTPUT}"

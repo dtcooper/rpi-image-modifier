@@ -3,6 +3,7 @@
 ## UNRELEASED
 
 * Added `extra-xz-args` input
+* Added `image-sha256sum` output
 
 ## v1.2.1
 
