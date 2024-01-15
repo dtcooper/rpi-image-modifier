@@ -14,8 +14,9 @@ GitHub Action to modify a base Docker image
 | `env-vars`         | Comma-separated environment variables to pass to the script, example: `ONE,TWO,THREE` | -                       |
 | `image-path`       | What to name the modified image                                                       | `'rpi-os-modified.img'` |
 | `mount-repository` | Temporary mount repository at /mounted-github-repo/ for copying files                 | `'true'`                |
-| `compress-with-xz` | Compress final image with xz (image-path will have an .xz extension added)            | `'false'`               |
-| `shrink`           | Shrink final image using PiShrink (<https://github.com/Drewsif/PiShrink>)        | `'true'`               |
+| `compress-with-xz` | Compress final image with xz (`image-path` output will have an .xz extension added)   | `'false'`               |
+| `extra-xz-args`    | Extra arguments to pass to the xz command                                             | `''`                    |
+| `shrink`           | Shrink final image using PiShrink (<https://github.com/Drewsif/PiShrink>)             | `'true'`               |
 | `shell`            | Shell in container to execute script                                                  | `'/bin/bash'`           |
 | `cache`            | Cache image file located at base-image-url                                            | `'false'`               |
 | `image-maxsize`    | That maximum size of the modified image (needs to fit on disk)                        | `'12G'`                 |

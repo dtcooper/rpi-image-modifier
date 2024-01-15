@@ -26,9 +26,13 @@ inputs:
     required: false
     default: 'true'
   compress-with-xz:
-    description: 'Compress final image with xz (image-path will have an .xz extension added)'
+    description: 'Compress final image with xz (image-path output will have an .xz extension added)'
     required: false
     default: 'false'
+  extra-xz-args:
+    description: 'Extra arguments to pass to the xz command'
+    required: false
+    default: ''
   shrink:
     description: 'Shrink final image using PiShrink (https://github.com/Drewsif/PiShrink)'
     required: false
@@ -85,6 +89,7 @@ runs:
         __ARG_IMAGE_PATH: ${{ inputs.image-path }}
         __ARG_MOUNT_REPOSITORY: ${{ inputs.mount-repository == 'true' && '1' || '' }}
         __ARG_COMPRESS_WITH_XZ: ${{ inputs.compress-with-xz == 'true' && '1' || '' }}
+        __ARG_EXTRA_XZ_ARGS: ${{ inputs.extra-xz-args }}
         __ARG_SHRINK: ${{ inputs.shrink == 'true' && '1' || '' }}
         __ARG_SHELL: ${{ inputs.shell }}
         __ARG_CACHE: ${{ inputs.cache == 'true' && '1' || '' }}

@@ -152,7 +152,7 @@ mv -v rpi.img "${ORIG_DIR}/${__ARG_IMAGE_PATH}"
 
 if [ "${__ARG_COMPRESS_WITH_XZ}" ]; then
     echo_green 'Compressing image using xz (this may take a while)'
-    xz -T0 "${ORIG_DIR}/${__ARG_IMAGE_PATH}"
+    xz -T0 ${__ARG_EXTRA_XZ_ARGS} "${ORIG_DIR}/${__ARG_IMAGE_PATH}"
     __ARG_IMAGE_PATH="${__ARG_IMAGE_PATH}.xz"
 fi
 

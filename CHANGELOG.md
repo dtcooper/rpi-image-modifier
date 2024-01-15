@@ -1,5 +1,9 @@
 # Changelog for Raspberry Pi OS Image Modifier GitHub Action
 
+## UNRELEASED
+
+* Added `extra-xz-args` input
+
 ## v1.2.1
 
 * Clean up temporary directory after running
