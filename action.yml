@@ -57,6 +57,9 @@ outputs:
   image-size:
     description: 'Size of image, as it was before xz compression was optionally applied'
     value: ${{ steps.modify-image.outputs.image-size }}
+  image-sha256sum:
+    description: 'SHA256 sum of image file after xz compression is optionally applied'
+    value: ${{ steps.modify-image.outputs.image-sha256sum }}
 
 runs:
   using: "composite"
