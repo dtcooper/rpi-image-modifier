@@ -1,6 +1,6 @@
 # Changelog for Raspberry Pi OS Image Modifier GitHub Action
 
-## UNRELEASED
+## v1.3.0
 
 * Added `extra-xz-args` input
 * Added `image-sha256sum` output
