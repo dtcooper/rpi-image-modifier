@@ -117,9 +117,9 @@ jobs:
         name: Print outputs
         shell: bash
         run: |
-          echo 'OUTPUT: ${{ steps.create-image.outputs.image-path }}'
-          echo 'OUTPUT: ${{ steps.create-image.outputs.image-size }}'
-          echo 'OUTPUT: ${{ steps.create-image.outputs.image-sha256sum }}'
+          echo 'image-path: ${{ steps.create-image.outputs.image-path }}'
+          echo 'image-size: ${{ steps.create-image.outputs.image-size }}'
+          echo 'image-sha256sum: ${{ steps.create-image.outputs.image-sha256sum }}'
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4
