@@ -32,7 +32,7 @@ GitHub Action to modify a base Docker image
 
 ### Example
 
-```
+```yaml
 name: ci
 
 on:
@@ -69,6 +69,13 @@ jobs:
 
             # Should print 'hi mom!'
             echo "$TEST"
+      -
+        name: Print outputs
+        shell: bash
+        run: |
+          echo 'OUTPUT: ${{ steps.create-image.outputs.image-path }}'
+          echo 'OUTPUT: ${{ steps.create-image.outputs.image-size }}'
+          echo 'OUTPUT: ${{ steps.create-image.outputs.image-sha256sum }}'
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4
