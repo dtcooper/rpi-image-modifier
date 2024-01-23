@@ -97,21 +97,29 @@ jobs:
           TEST: 'hi mom!'
         with:
           base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2023-12-11/2023-12-11-raspios-bookworm-arm64-lite.img.xz
-          image-path: 2023-12-11-raspios-bookworm-arm64-lite-with-pygame.img
+          image-path: 2023-12-11-raspios-bookworm-arm64-lite-modified-with-pygame.img
           compress-with-xz: true
           cache: true
           mount-repository: true
           env-vars: TEST
           run: |
             # Copy project README to root directory
-            cp -v /mounted-github-repo/README.md /root
+            cp -v /mounted-github-repo/README.md /home/pi/README.md
+            chown -v pi:pi /home/pi/README.md
 
             # Install pygame
             apt-get update
-            apt-get install -y python3-pygame
+            apt-get install -y --no-install-recommends python3-pygame
 
             # Should print 'hi mom!'
             echo "$TEST"
+      -
+        name: Print outputs
+        shell: bash
+        run: |
+          echo 'OUTPUT: ${{ steps.create-image.outputs.image-path }}'
+          echo 'OUTPUT: ${{ steps.create-image.outputs.image-size }}'
+          echo 'OUTPUT: ${{ steps.create-image.outputs.image-sha256sum }}'
       -
         name: Upload build artifact
         uses: actions/upload-artifact@v4
