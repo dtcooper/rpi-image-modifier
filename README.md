@@ -1,6 +1,6 @@
 # Raspberry Pi OS Image Modifier GitHub Action
 
-GitHub Action to modify a base Docker image
+GitHub Action to modify a base Raspberry Pi OS image
 
 ## Usage
 
