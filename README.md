@@ -2,6 +2,10 @@
 
 GitHub Action to modify a base Raspberry Pi OS image
 
+This is action is a _simple_ way to modify a base Raspberry Pi OS image. For more complicated use
+cases, or to build an image from scratch, I recommend using
+[`usimd/pi-gen-action`](https://github.com/usimd/pi-gen-action).
+
 ## Usage
 
 ### Action Inputs
