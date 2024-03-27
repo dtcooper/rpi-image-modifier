@@ -56,8 +56,8 @@ jobs:
         env:
           TEST: 'hi mom!'
         with:
-          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-03-13/2024-03-12-raspios-bookworm-arm64-lite.img.xz
-          image-path: 2024-03-12-raspios-bookworm-arm64-lite-modified-with-pygame.img
+          base-image-url: https://downloads.raspberrypi.com/raspios_lite_arm64/images/raspios_lite_arm64-2024-03-15/2024-03-15-raspios-bookworm-arm64-lite.img.xz
+          image-path: 2024-03-15-raspios-bookworm-arm64-lite-modified-with-pygame.img
           compress-with-xz: true
           cache: true
           mount-repository: true
