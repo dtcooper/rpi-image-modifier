@@ -28,16 +28,16 @@ fi
 
 echo_green 'Installing dependencies'
 
-sudo apt-get update
+sudo apt-get update -q
 
 # qemu-user-static automatically installs aarch64/arm interpeters
-sudo apt-get install -y --no-install-recommends \
+sudo apt-get install -y -q --no-install-recommends \
     pwgen \
     qemu-user-static \
     systemd-container
 
 if [ "${__ARG_SHRINK}" ]; then
-    sudo wget -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
+    sudo wget -q -O /usr/local/bin/pishrink.sh https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh
     sudo chmod +x /usr/local/bin/pishrink.sh
 fi
 
@@ -53,7 +53,7 @@ if [ "${__ARG_CACHE}" -a -e /tmp/rpi-cached.img ]; then
     mv -v /tmp/rpi-cached.img rpi.img
 else
     echo_green "Downloading ${__ARG_BASE_IMAGE_URL}..."
-    wget -O rpi.img "${__ARG_BASE_IMAGE_URL}"
+    wget -q -O rpi.img "${__ARG_BASE_IMAGE_URL}"
     NEEDS_CACHE_COPY=1
 fi
 
